@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BudapestLex · Convenio sobre la Ciberdelincuencia</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#080c10;--bg2:#0e1419;--bg3:#141c24;--bg4:#1a2530;
+  --surface:rgba(20,28,38,.75);--border:rgba(255,255,255,.07);
+  --border2:rgba(255,255,255,.12);--border3:rgba(255,255,255,.2);
+  --teal:#0fcfcf;--teal-d:#0a9999;--teal-dim:rgba(15,207,207,.1);
+  --blue:#3b82f6;--blue-dim:rgba(59,130,246,.1);
+  --amber:#f59e0b;--amber-dim:rgba(245,158,11,.1);
+  --emerald:#10b981;--emerald-dim:rgba(16,185,129,.1);
+  --rose:#f43f5e;--rose-dim:rgba(244,63,94,.1);
+  --violet:#8b5cf6;--violet-dim:rgba(139,92,246,.1);
+  --txt:#e8eef4;--txt2:#94a3b8;--txt3:#64748b;
+  --mono:'DM Mono',monospace;--sans:'Syne',sans-serif;--serif:'Instrument Serif',serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* BG */
+.bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.35}
+.o1{width:500px;height:500px;background:radial-gradient(circle,rgba(15,207,207,.2) 0%,transparent 70%);top:-150px;left:-100px;animation:d1 18s ease-in-out infinite}
+.o2{width:400px;height:400px;background:radial-gradient(circle,rgba(59,130,246,.15) 0%,transparent 70%);bottom:-100px;right:-80px;animation:d2 22s ease-in-out infinite}
+.bg-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(15,207,207,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(15,207,207,.02) 1px,transparent 1px);background-size:60px 60px}
+@keyframes d1{0%,100%{transform:translate(0,0)}50%{transform:translate(50px,-40px)}}
+@keyframes d2{0%,100%{transform:translate(0,0)}50%{transform:translate(-40px,-30px)}}
+
+/* HEADER */
+.hdr{position:sticky;top:0;z-index:200;background:rgba(8,12,16,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 1.5rem}
+.hdr-in{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:16px;height:58px}
+.logo{font-family:var(--serif);font-size:1.35rem;font-style:italic;color:var(--txt);text-decoration:none;flex-shrink:0}
+.logo b{font-style:normal;color:var(--teal)}
+.pulse{width:6px;height:6px;border-radius:50%;background:var(--teal);box-shadow:0 0 8px var(--teal);display:inline-block;margin-left:6px;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.5)}}
+.nav{display:flex;gap:4px;flex:1;overflow-x:auto;scrollbar-width:none;cursor:grab}
+.nav::-webkit-scrollbar{display:none}
+.nbtn{padding:7px 14px;border-radius:7px;border:1px solid transparent;background:transparent;font-family:var(--sans);font-size:13px;font-weight:600;color:var(--txt3);cursor:pointer;transition:all .2s;white-space:nowrap}
+.nbtn:hover{color:var(--txt);background:var(--bg3);border-color:var(--border)}
+.nbtn.on{color:var(--teal);background:var(--teal-dim);border-color:rgba(15,207,207,.3)}
+.htag{flex-shrink:0;font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);background:var(--teal-dim);border:1px solid rgba(15,207,207,.2);padding:4px 10px;border-radius:20px}
+
+/* WRAP */
+.wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:2rem 1.5rem 6rem}
+.page{display:none}
+.page.on{display:block;animation:fadeup .35s cubic-bezier(.16,1,.3,1) both}
+@keyframes fadeup{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* STUDY RAIL */
+.rail{display:flex;overflow-x:auto;border-bottom:1px solid var(--border);margin-bottom:2rem;position:sticky;top:58px;background:rgba(8,12,16,.95);backdrop-filter:blur(20px);z-index:100;scrollbar-width:thin;scrollbar-color:var(--teal) var(--bg3);cursor:grab;padding-bottom:4px}
+.rail.grabbing{cursor:grabbing}
+.rail::-webkit-scrollbar{height:4px}
+.rail::-webkit-scrollbar-track{background:var(--bg3)}
+.rail::-webkit-scrollbar-thumb{background:var(--teal);border-radius:4px}
+.stab{padding:11px 16px;border:none;background:transparent;font-family:var(--sans);font-size:11px;font-weight:700;color:var(--txt3);cursor:pointer;transition:all .2s;border-bottom:2px solid transparent;margin-bottom:-4px;white-space:nowrap;letter-spacing:.04em;text-transform:uppercase;line-height:1.4;text-align:left;flex-shrink:0}
+.stab span{display:block;font-family:var(--mono);font-size:8px;color:var(--txt3);opacity:.6;margin-bottom:2px;letter-spacing:.1em;font-weight:400;text-transform:uppercase}
+.stab:hover{color:var(--txt)}
+.stab:hover span{opacity:.8}
+.stab.on{color:var(--teal);border-bottom-color:var(--teal)}
+.stab.on span{color:var(--teal);opacity:.8}
+.ssec{display:none}
+.ssec.on{display:block;animation:fadeup .3s ease both}
+
+/* LAYOUT WITH SIDEBAR */
+.study-wrap{display:grid;grid-template-columns:200px 1fr;gap:1.75rem;align-items:start}
+.sidebar{position:sticky;top:120px;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:.6rem;backdrop-filter:blur(16px);max-height:calc(100vh - 150px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+.sb-ch{font-family:var(--mono);font-size:8.5px;text-transform:uppercase;letter-spacing:.14em;color:var(--txt3);padding:8px 8px 3px;display:flex;align-items:center;gap:5px;border-top:1px solid var(--border);margin-top:4px}
+.sb-ch:first-child{border-top:none;margin-top:0}
+.sb-ch-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.sbl{display:block;padding:6px 9px;border-radius:6px;font-size:11.5px;color:var(--txt3);cursor:pointer;transition:all .15s;background:transparent;border:none;text-align:left;width:100%;font-family:var(--sans);line-height:1.3}
+.sbl:hover{background:var(--bg3);color:var(--txt)}
+.sbl.on{background:var(--teal-dim);color:var(--teal);font-weight:600}
+.sbl em{display:block;font-family:var(--mono);font-size:8.5px;color:var(--teal);opacity:.65;margin-bottom:1px;font-style:normal}
+.sbl.on em{opacity:1}
+.sbl:hover em{opacity:.9}
+@media(max-width:860px){.study-wrap{grid-template-columns:1fr}.sidebar{position:static;max-height:none;display:flex;flex-wrap:wrap;gap:4px;padding:.5rem}.sb-ch{width:100%}.sbl{width:auto;padding:4px 9px;font-size:10.5px}}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:1.5rem;margin-bottom:1rem;backdrop-filter:blur(12px);transition:border-color .2s}
+.card:hover{border-color:var(--border3)}
+.card p{font-size:14px;color:var(--txt2);line-height:1.8;margin-bottom:.6rem}
+.card h3{font-size:12px;font-weight:700;color:var(--txt);margin:1rem 0 .5rem;text-transform:uppercase;letter-spacing:.06em}
+.card ul{padding-left:1.25rem}
+.card li{font-size:13.5px;color:var(--txt2);line-height:1.75;margin-bottom:5px}
+.card strong{color:var(--txt);font-weight:700}
+.card-head{display:flex;align-items:center;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
+.card-title{font-size:15px;font-weight:700;color:var(--txt)}
+
+/* ART BLOCKS */
+.ab{border-left:2px solid var(--teal);padding:1.25rem 1.4rem;background:var(--teal-dim);border-radius:0 12px 12px 0;margin-bottom:.9rem;transition:all .2s;position:relative}
+.ab:hover{background:rgba(15,207,207,.07)}
+.ab.b{border-left-color:var(--blue);background:var(--blue-dim)}.ab.b:hover{background:rgba(59,130,246,.07)}
+.ab.a{border-left-color:var(--amber);background:var(--amber-dim)}.ab.a:hover{background:rgba(245,158,11,.07)}
+.ab.e{border-left-color:var(--emerald);background:var(--emerald-dim)}.ab.e:hover{background:rgba(16,185,129,.07)}
+.ab.v{border-left-color:var(--violet);background:var(--violet-dim)}.ab.v:hover{background:rgba(139,92,246,.07)}
+.ab.r{border-left-color:var(--rose);background:var(--rose-dim)}
+.an{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--teal);margin-bottom:4px;font-weight:500}
+.ab.b .an{color:var(--blue)}.ab.a .an{color:var(--amber)}.ab.e .an{color:var(--emerald)}.ab.v .an{color:var(--violet)}.ab.r .an{color:var(--rose)}
+.at{font-size:14.5px;font-weight:700;color:var(--txt);margin-bottom:8px}
+.ab-body{font-size:13.5px;color:var(--txt2);line-height:1.8}
+.ab-body strong{color:var(--txt);font-weight:700}
+.pena{display:inline-flex;align-items:center;gap:5px;margin-top:10px;font-family:var(--mono);font-size:9.5px;padding:4px 11px;border-radius:4px}
+.pt{background:var(--teal-dim);color:var(--teal);border:1px solid rgba(15,207,207,.2)}
+.pa{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,.2)}
+
+/* BADGES */
+.bdg{font-family:var(--mono);font-size:9px;letter-spacing:.07em;padding:3px 8px;border-radius:4px}
+.bt{background:var(--teal-dim);color:var(--teal);border:1px solid rgba(15,207,207,.2)}
+.bb{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,.2)}
+.be{background:var(--emerald-dim);color:var(--emerald);border:1px solid rgba(16,185,129,.2)}
+.bv{background:var(--violet-dim);color:var(--violet);border:1px solid rgba(139,92,246,.2)}
+.br{background:var(--rose-dim);color:var(--rose);border:1px solid rgba(244,63,94,.2)}
+.ba{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,.2)}
+
+/* CHAPTER GRID */
+.ch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.9rem;margin-bottom:1.75rem}
+.ch-card{background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:1.25rem;transition:all .2s}
+.ch-card:hover{transform:translateY(-2px);border-color:var(--border3)}
+.ch-n{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px;font-weight:500}
+.ch-title{font-size:13px;font-weight:700;color:var(--txt);margin-bottom:4px}
+.ch-arts{font-size:11.5px;color:var(--txt3);font-family:var(--mono)}
+
+/* SLABEL */
+.slabel{font-family:var(--mono);font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.18em;color:var(--txt3);display:flex;align-items:center;gap:10px;margin:2rem 0 1rem;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.slabel::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent)}
+
+/* ── FLASHCARDS ── */
+.fc-wrap{margin-bottom:1.5rem}
+.fc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;flex-wrap:wrap;gap:.5rem}
+.fc-filters{display:flex;gap:6px;flex-wrap:wrap}
+.fc-counter{font-family:var(--mono);font-size:11px;color:var(--txt3)}
+.fc-prog-wrap{height:3px;background:var(--bg3);border-radius:3px;margin-bottom:1.25rem;overflow:hidden}
+.fc-prog{height:100%;background:linear-gradient(90deg,var(--teal),var(--blue));border-radius:3px;transition:width .4s cubic-bezier(.4,0,.2,1);box-shadow:0 0 8px var(--teal)}
+
+/* The card scene */
+.fc-scene{perspective:1400px;cursor:pointer;margin-bottom:1.25rem}
+.fc-inner{position:relative;height:300px;transform-style:preserve-3d;transition:transform .6s cubic-bezier(.4,0,.2,1)}
+.fc-scene:hover .fc-inner:not(.flipped){transform:rotateY(5deg) rotateX(1deg) scale(1.01)}
+.fc-inner.flipped{transform:rotateY(180deg)}
+.fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:16px;padding:1.75rem 2rem;display:flex;flex-direction:column;border:1px solid var(--border2)}
+.fc-front{background:linear-gradient(135deg,var(--bg3) 0%,var(--bg2) 100%);transition:box-shadow .3s,border-color .3s}
+.fc-scene:hover .fc-front{box-shadow:0 0 40px rgba(15,207,207,.12),0 20px 40px rgba(0,0,0,.5);border-color:rgba(15,207,207,.2)}
+.fc-back{background:linear-gradient(135deg,rgba(15,207,207,.07) 0%,var(--bg2) 70%);border-color:rgba(15,207,207,.25);transform:rotateY(180deg)}
+.fc-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:auto}
+.fc-badge{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.14em;padding:3px 10px;border-radius:4px;background:var(--teal-dim);color:var(--teal);border:1px solid rgba(15,207,207,.2)}
+.fc-hint{font-family:var(--mono);font-size:9px;color:var(--txt3);letter-spacing:.08em}
+.fc-term{font-family:var(--serif);font-size:clamp(1.5rem,3.5vw,2.2rem);font-style:italic;color:var(--txt);line-height:1.15;letter-spacing:-.02em;margin:1rem 0 .4rem}
+.fc-preview{font-size:12.5px;color:var(--txt3);line-height:1.6;font-style:italic;border-top:1px solid var(--border);padding-top:.6rem}
+.fc-tag{font-family:var(--mono);font-size:9.5px;color:var(--txt3)}
+.fc-back-lbl{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--teal);margin-bottom:.9rem;display:flex;align-items:center;gap:8px}
+.fc-back-lbl::before{content:'';width:16px;height:1px;background:var(--teal);display:block}
+.fc-def{font-size:13.5px;color:var(--txt2);line-height:1.85;flex:1;overflow-y:auto}
+.fc-back-hint{font-family:var(--mono);font-size:8.5px;color:var(--txt3);text-align:right;margin-top:.5rem}
+.fc-nav{display:flex;align-items:center;justify-content:center;gap:.9rem}
+.fc-arrow{width:50px;height:50px;border-radius:50%;border:1px solid var(--border2);background:var(--bg3);color:var(--txt);font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.fc-arrow:hover{border-color:rgba(15,207,207,.4);background:var(--teal-dim);color:var(--teal)}
+.fc-flip-btn{padding:11px 26px;border-radius:40px;border:1px solid rgba(15,207,207,.35);background:var(--teal-dim);color:var(--teal);font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.03em}
+.fc-flip-btn:hover{background:var(--teal);color:var(--bg)}
+
+/* FILTER PILLS */
+.flt{padding:5px 13px;border-radius:40px;border:1px solid var(--border2);background:transparent;color:var(--txt3);font-family:var(--mono);font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;cursor:pointer;transition:all .18s}
+.flt:hover{border-color:var(--border3);color:var(--txt)}
+.flt.on{background:var(--teal);color:var(--bg);border-color:var(--teal);box-shadow:0 0 14px rgba(15,207,207,.25)}
+
+/* BTN */
+.btn{padding:9px 20px;border-radius:7px;border:1px solid var(--border2);background:var(--bg3);color:var(--txt);font-family:var(--sans);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
+.btn:hover{background:var(--bg4);border-color:var(--border3)}
+.btn.primary{background:var(--teal);color:var(--bg);border-color:var(--teal);box-shadow:0 0 20px rgba(15,207,207,.25)}
+.btn.primary:hover{background:var(--teal-d)}
+
+/* ── GAME ── */
+.game-hdr{display:flex;align-items:center;gap:1.25rem;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:1rem 1.5rem;margin-bottom:1.25rem;flex-wrap:wrap;backdrop-filter:blur(12px)}
+.gsc{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:56px}
+.gsc-n{font-family:var(--serif);font-size:2.3rem;font-weight:400;line-height:1;transition:all .25s}
+.gsc-n.c{color:var(--emerald);text-shadow:0 0 20px rgba(16,185,129,.3)}
+.gsc-n.e{color:var(--rose);text-shadow:0 0 20px rgba(244,63,94,.3)}
+.gsc-l{font-family:var(--mono);font-size:8.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--txt3)}
+.gprog{flex:1;min-width:140px}
+.gprog-info{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--txt3);margin-bottom:6px}
+.gprog-bar{height:4px;background:var(--bg3);border-radius:4px;overflow:hidden}
+.gprog-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--blue));border-radius:4px;box-shadow:0 0 8px var(--teal-d);transition:width .5s cubic-bezier(.4,0,.2,1)}
+.rdots{display:flex;gap:5px;align-items:center}
+.rdot{width:7px;height:7px;border-radius:50%;background:var(--bg3);border:1px solid var(--border2);transition:all .3s}
+.rdot.done{background:var(--emerald);border-color:var(--emerald);box-shadow:0 0 6px var(--emerald)}
+.rdot.active{background:var(--teal);border-color:var(--teal);box-shadow:0 0 6px var(--teal);animation:pulse 1.5s ease-in-out infinite}
+.mode-strip{display:flex;gap:7px;margin-bottom:1rem;flex-wrap:wrap;align-items:center}
+.mbtn{padding:7px 17px;border-radius:40px;border:1px solid var(--border2);background:transparent;color:var(--txt3);font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
+.mbtn:hover{color:var(--txt);border-color:var(--border3)}
+.mbtn.on{color:var(--bg);background:var(--teal);border-color:var(--teal);box-shadow:0 0 18px rgba(15,207,207,.25)}
+.rnd-head{font-family:var(--mono);font-size:9.5px;font-weight:500;text-transform:uppercase;letter-spacing:.14em;padding:10px 14px;border-left:2px solid var(--teal);border-radius:0 7px 7px 0;background:var(--teal-dim);color:var(--teal);margin-bottom:1.25rem;display:flex;align-items:center;justify-content:space-between}
+.rnd-head.b{border-left-color:var(--blue);background:var(--blue-dim);color:var(--blue)}
+.rnd-head.a{border-left-color:var(--amber);background:var(--amber-dim);color:var(--amber)}
+.rnd-head.e{border-left-color:var(--emerald);background:var(--emerald-dim);color:var(--emerald)}
+.rnd-head.v{border-left-color:var(--violet);background:var(--violet-dim);color:var(--violet)}
+.rnd-head.r{border-left-color:var(--rose);background:var(--rose-dim);color:var(--rose)}
+.instr{font-family:var(--mono);font-size:10px;color:var(--txt3);text-align:center;letter-spacing:.06em;background:var(--bg2);border:1px dashed var(--border2);border-radius:7px;padding:10px;margin-bottom:1.25rem}
+/* drag */
+.drag-layout{display:grid;grid-template-columns:1fr 1fr;gap:1.75rem}
+@media(max-width:800px){.drag-layout{grid-template-columns:1fr}}
+.col-head{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--txt3);padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:.75rem;display:flex;align-items:center;gap:6px}
+.col-head::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--teal)}
+.drag-items{display:flex;flex-direction:column;gap:7px}
+.dc{padding:11px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--surface);cursor:grab;transition:all .2s;position:relative;overflow:hidden;user-select:none;backdrop-filter:blur(10px)}
+.dc::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--teal);border-radius:3px 0 0 3px}
+.dc.b::before{background:var(--blue)}.dc.a::before{background:var(--amber)}.dc.e::before{background:var(--emerald)}.dc.v::before{background:var(--violet)}
+.dc:hover{border-color:rgba(15,207,207,.35);transform:translateX(3px);box-shadow:-3px 0 16px rgba(15,207,207,.08),0 4px 16px rgba(0,0,0,.25)}
+.dc.b:hover{border-color:rgba(59,130,246,.35);box-shadow:-3px 0 16px rgba(59,130,246,.08),0 4px 16px rgba(0,0,0,.25)}
+.dc.dragging{opacity:.3;transform:scale(.95);cursor:grabbing}
+.dc.matched{border-color:rgba(16,185,129,.35);background:var(--emerald-dim);cursor:default;animation:pop .4s cubic-bezier(.16,1,.3,1)}
+.dc.matched::before{background:var(--emerald)}
+.dc-art{font-family:var(--mono);font-size:9px;color:var(--teal);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;font-weight:500}
+.dc.b .dc-art{color:var(--blue)}.dc.a .dc-art{color:var(--amber)}.dc.e .dc-art{color:var(--emerald)}.dc.v .dc-art{color:var(--violet)}
+.dc-txt{font-size:12px;color:var(--txt3);line-height:1.45}
+.chk{position:absolute;right:10px;top:50%;transform:translateY(-50%) scale(0);width:20px;height:20px;border-radius:50%;background:var(--emerald);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--bg);transition:transform .2s}
+.dc.matched .chk{transform:translateY(-50%) scale(1)}
+.dz{min-height:62px;padding:12px 14px;border:1.5px dashed var(--border2);border-radius:10px;background:rgba(255,255,255,.015);transition:all .2s;position:relative}
+.dz.over{border-color:rgba(15,207,207,.5);background:var(--teal-dim);box-shadow:0 0 24px rgba(15,207,207,.12);transform:scale(1.01)}
+.dz.filled{border-style:solid;border-color:rgba(16,185,129,.35);background:var(--emerald-dim);animation:pop .4s cubic-bezier(.16,1,.3,1)}
+.dz.wrong{border-color:rgba(244,63,94,.5);background:var(--rose-dim);animation:shake .35s ease}
+.dz-lbl{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--txt3);position:absolute;top:-7px;left:10px;background:var(--bg);padding:0 5px}
+.dz-ph{font-size:12px;color:rgba(255,255,255,.18);font-style:italic;line-height:1.5}
+.dz-content{font-size:12px;color:var(--txt2);line-height:1.5}
+/* click game */
+.click-list{display:flex;flex-direction:column;gap:9px}
+.click-pair{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:10px;border-radius:10px;background:var(--surface);border:1px solid var(--border2);transition:all .2s;backdrop-filter:blur(10px)}
+@media(max-width:600px){.click-pair{grid-template-columns:1fr}}
+.click-pair.matched-p{border-color:rgba(16,185,129,.3);background:var(--emerald-dim);animation:pop .4s cubic-bezier(.16,1,.3,1)}
+.click-pair.wrong-p{border-color:rgba(244,63,94,.3);background:var(--rose-dim);animation:shake .35s}
+.ci{padding:10px 12px;border-radius:7px;border:1px solid var(--border);background:rgba(255,255,255,.025);cursor:pointer;transition:all .18s}
+.ci:hover{border-color:rgba(15,207,207,.3);background:var(--teal-dim)}
+.ci.sel{border-color:rgba(15,207,207,.5);background:var(--teal-dim);box-shadow:0 0 16px rgba(15,207,207,.08)}
+.ci.matched-i{border-color:rgba(16,185,129,.3);background:var(--emerald-dim);cursor:default}
+.ci-lbl{font-family:var(--mono);font-size:8.5px;color:var(--teal);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;font-weight:500}
+.ci.def .ci-lbl{color:var(--amber)}
+.ci-txt{font-size:11.5px;color:var(--txt2);line-height:1.5}
+/* win */
+.win{text-align:center;padding:4rem 2rem;background:var(--surface);border:1px solid rgba(16,185,129,.25);border-radius:18px;display:none;backdrop-filter:blur(20px);box-shadow:0 0 50px rgba(16,185,129,.08),0 32px 64px rgba(0,0,0,.5)}
+.win.show{display:block;animation:fadeup .5s cubic-bezier(.16,1,.3,1) both}
+.win-trophy{font-size:4.5rem;margin-bottom:1rem;animation:bounce 1.2s ease-in-out infinite}
+@keyframes bounce{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-12px) rotate(5deg)}}
+.win-title{font-family:var(--serif);font-size:3.5rem;font-style:italic;color:var(--txt);margin-bottom:.4rem}
+.win-title b{color:var(--teal);font-style:normal}
+.win-sub{color:var(--txt3);font-size:13px;margin-bottom:2rem;font-family:var(--mono);letter-spacing:.08em}
+.win-stats{display:flex;gap:1.5rem;justify-content:center;margin-bottom:2rem;flex-wrap:wrap}
+.win-stat{background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:1rem 1.5rem}
+.ws-n{font-family:var(--serif);font-size:2.8rem;color:var(--emerald)}
+.ws-l{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--txt3)}
+
+/* ── QUIZ ── */
+.quiz-top{display:flex;align-items:center;gap:1.25rem;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:.9rem 1.4rem;margin-bottom:1.25rem;flex-wrap:wrap;backdrop-filter:blur(12px)}
+.qst{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--txt3)}
+.qst-n{font-size:14px;font-weight:700;font-family:var(--serif)}
+.qst-n.c{color:var(--emerald)}.qst-n.e{color:var(--rose)}.qst-n.p{color:var(--teal)}
+.quiz-filters{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:1.5rem}
+.qcard{background:var(--surface);border:1px solid var(--border2);border-radius:11px;padding:1.25rem;margin-bottom:.8rem;backdrop-filter:blur(10px);transition:border-color .3s;animation:fadeup .25s ease both}
+.qcard.ck{border-color:rgba(16,185,129,.35)}.qcard.ce{border-color:rgba(244,63,94,.35)}
+.qmeta{display:flex;align-items:center;gap:7px;margin-bottom:.9rem;flex-wrap:wrap}
+.qn{font-family:var(--mono);font-size:9.5px;color:var(--txt3)}
+.qb{font-family:var(--mono);font-size:8.5px;padding:2px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:.07em}
+.qb.vf{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,.2)}
+.qb.mc{background:var(--violet-dim);color:var(--violet);border:1px solid rgba(139,92,246,.2)}
+.qb.cat{background:var(--teal-dim);color:var(--teal);border:1px solid rgba(15,207,207,.2)}
+.qt{font-size:13.5px;line-height:1.7;margin-bottom:1rem;font-weight:600;color:var(--txt)}
+.qopts{display:flex;flex-direction:column;gap:7px}
+.qopt{padding:10px 14px;border-radius:7px;border:1px solid var(--border);background:rgba(255,255,255,.025);cursor:pointer;font-size:13px;color:var(--txt2);transition:all .18s;text-align:left;display:flex;align-items:center;gap:10px;line-height:1.4;font-family:var(--sans)}
+.qopt:hover{border-color:rgba(15,207,207,.3);background:var(--teal-dim);color:var(--txt)}
+.qopt.ck{border-color:rgba(16,185,129,.35);background:var(--emerald-dim);color:var(--emerald)}
+.qopt.ce{border-color:rgba(244,63,94,.35);background:var(--rose-dim);color:var(--rose)}
+.qopt.dis{cursor:default;pointer-events:none}
+.odot{width:18px;height:18px;border-radius:50%;flex-shrink:0;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:10px;transition:all .2s}
+.qfb{margin-top:.9rem;font-size:13px;padding:10px 14px;border-radius:7px;display:none;line-height:1.6;font-family:var(--sans)}
+.qfb.show{display:block}
+.qfb.ok{background:var(--emerald-dim);color:var(--emerald);border-left:3px solid var(--emerald)}
+.qfb.ko{background:var(--rose-dim);color:#ff8fa0;border-left:3px solid var(--rose)}
+
+/* ANIMATIONS */
+@keyframes pop{0%{transform:scale(.92)}60%{transform:scale(1.04)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+.confetti-p{position:fixed;border-radius:2px;animation:cfall 3s ease-in forwards;pointer-events:none;z-index:9999}
+@keyframes cfall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.particle{position:fixed;border-radius:50%;pointer-events:none;z-index:9999;animation:ppop .6s ease-out forwards}
+@keyframes ppop{0%{transform:scale(0);opacity:1}60%{opacity:1}100%{transform:scale(1) translate(var(--tx),var(--ty));opacity:0}}
+</style>
+</head>
+<body>
+
+<div class="bg-canvas">
+  <div class="orb o1"></div>
+  <div class="orb o2"></div>
+  <div class="bg-grid"></div>
+</div>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-in">
+    <a href="#" class="logo"><b>Budapest</b>Lex<span class="pulse"></span></a>
+    <nav class="nav" id="main-nav">
+      <button class="nbtn on" onclick="showPage('guia',this)">📖 Guía Completa</button>
+      <button class="nbtn" onclick="showPage('juego',this)">🎮 Juego Completo</button>
+      <button class="nbtn" onclick="showPage('quiz',this)">🧠 Quiz 90 Preguntas</button>
+    </nav>
+    <span class="htag">STE N° 185 · 48 artículos</span>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- ═══════════════════ PÁGINA GUÍA ═══════════════════ -->
+<div id="page-guia" class="page on">
+
+  <!-- RAIL -->
+
+  <!-- HERO -->
+  <div style="padding:3rem 0 2.5rem;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:0">
+    <div style="display:grid;grid-template-columns:1fr 280px;gap:2rem;align-items:start">
+      <div>
+        <div style="font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.18em;color:var(--tc);margin-bottom:1rem;display:flex;align-items:center;gap:10px"><span style="width:28px;height:1px;background:var(--tc);display:inline-block"></span>Consejo de Europa · Primer Tratado Internacional Vinculante</div>
+        <h1 style="font-family:var(--ser);font-size:clamp(2.6rem,5vw,4.5rem);font-weight:400;font-style:italic;line-height:1.05;letter-spacing:-.03em;margin-bottom:1.25rem">Convenio sobre la<br><span style="color:var(--tc);font-style:normal;font-weight:700">Ciberdelincuencia</span><br><span style="color:var(--t3)">Budapest · 2001</span></h1>
+        <p style="font-size:14px;color:var(--t2);line-height:1.8;max-width:520px;margin-bottom:2rem">Guía completa artículo por artículo del <strong style="color:var(--t1)">STE N° 185</strong>: los 48 artículos, juego con 6 rondas y quiz con trampas incluidas.</p>
+        <div style="display:flex;gap:2.5rem;flex-wrap:wrap">
+          <div><div style="font-family:var(--ser);font-size:2.8rem;font-weight:400;line-height:1;color:var(--t1);letter-spacing:-.04em">48</div><div style="font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--t3);margin-top:4px">Artículos</div></div>
+          <div><div style="font-family:var(--ser);font-size:2.8rem;font-weight:400;line-height:1;color:var(--t1);letter-spacing:-.04em">6</div><div style="font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--t3);margin-top:4px">Rondas de juego</div></div>
+          <div><div style="font-family:var(--ser);font-size:2.8rem;font-weight:400;line-height:1;color:var(--t1);letter-spacing:-.04em">70</div><div style="font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--t3);margin-top:4px">Preguntas quiz</div></div>
+          <div><div style="font-family:var(--ser);font-size:2.8rem;font-weight:400;line-height:1;color:var(--t1);letter-spacing:-.04em">28</div><div style="font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--t3);margin-top:4px">Tarjetas</div></div>
+        </div>
+      </div>
+      <div style="background:rgba(20,28,38,.8);border:1px solid rgba(255,255,255,.13);border-radius:14px;padding:1.4rem;backdrop-filter:blur(16px);box-shadow:0 0 40px rgba(15,207,207,.08)">
+        <div style="font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--t3);padding-bottom:.75rem;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:.75rem">Estructura</div>
+        <div style="display:flex;flex-direction:column;gap:3px">
+          <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05)"><span style="width:6px;height:6px;border-radius:50%;background:var(--tc);box-shadow:0 0 6px var(--tc);flex-shrink:0"></span><div><div style="font-size:12px;font-weight:700;color:var(--t1);font-family:var(--sans)">Cap. I — Art. 1</div><div style="font-family:var(--mono);font-size:9px;color:var(--t3)">4 definiciones clave</div></div></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05)"><span style="width:6px;height:6px;border-radius:50%;background:var(--bc);box-shadow:0 0 6px var(--bc);flex-shrink:0"></span><div><div style="font-size:12px;font-weight:700;color:var(--t1);font-family:var(--sans)">Cap. II-A — Arts. 2–13</div><div style="font-family:var(--mono);font-size:9px;color:var(--t3)">Delitos CID · fraude · resp.</div></div></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05)"><span style="width:6px;height:6px;border-radius:50%;background:var(--ec);box-shadow:0 0 6px var(--ec);flex-shrink:0"></span><div><div style="font-size:12px;font-weight:700;color:var(--t1);font-family:var(--sans)">Cap. II-B — Arts. 14–22</div><div style="font-family:var(--mono);font-size:9px;color:var(--t3)">Procedimiento · jurisdicción</div></div></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05)"><span style="width:6px;height:6px;border-radius:50%;background:var(--ac);box-shadow:0 0 6px var(--ac);flex-shrink:0"></span><div><div style="font-size:12px;font-weight:700;color:var(--t1);font-family:var(--sans)">Cap. III — Arts. 23–35</div><div style="font-family:var(--mono);font-size:9px;color:var(--t3)">Cooperación · Red 24/7</div></div></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:7px 0"><span style="width:6px;height:6px;border-radius:50%;background:var(--vc);box-shadow:0 0 6px var(--vc);flex-shrink:0"></span><div><div style="font-size:12px;font-weight:700;color:var(--t1);font-family:var(--sans)">Cap. IV — Arts. 36–48</div><div style="font-family:var(--mono);font-size:9px;color:var(--t3)">Firma · reservas · denuncia</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rail" id="rail">
+    <button class="stab on" onclick="showStudy('res',this)"><span>Intro</span>Resumen</button>
+    <button class="stab" onclick="showStudy('cap1',this)"><span>Cap. I · Art. 1</span>Terminología</button>
+    <button class="stab" onclick="showStudy('cid',this)"><span>Cap. II-A · Arts. 2–6</span>Delitos CID</button>
+    <button class="stab" onclick="showStudy('otros',this)"><span>Cap. II-A · Arts. 7–10</span>Más Delitos</button>
+    <button class="stab" onclick="showStudy('resp',this)"><span>Cap. II-A · Arts. 11–13</span>Responsabilidad</button>
+    <button class="stab" onclick="showStudy('proc',this)"><span>Cap. II-B · Arts. 14–22</span>Procedimiento</button>
+    <button class="stab" onclick="showStudy('coop',this)"><span>Cap. III · Arts. 23–35</span>Cooperación</button>
+    <button class="stab" onclick="showStudy('final',this)"><span>Cap. IV · Arts. 36–48</span>Cláusulas Finales</button>
+    <button class="stab" onclick="showStudy('cards',this)"><span>28 tarjetas · voltear</span>Flashcards</button>
+    <button class="stab" onclick="showStudy('chile',this)"><span>Comparativa</span>Chile ↔ Budapest</button>
+  </div>
+
+  <!-- ── RESUMEN ── -->
+  <div id="ssres" class="ssec on">
+    <div class="card">
+      <div class="card-head"><span class="card-title">¿Qué es el Convenio de Budapest?</span><span class="bdg bt">2001</span><span class="bdg bb">48 artículos</span></div>
+      <p>El <strong>Convenio sobre la Ciberdelincuencia</strong> (STE N° 185), firmado en Budapest el <strong>23 de noviembre de 2001</strong>, es el <em>primer tratado internacional vinculante</em> sobre ciberdelitos. Entró en vigor el <strong>1 de julio de 2004</strong>. Su objetivo: armonizar legislaciones penales, crear herramientas procesales y facilitar la cooperación internacional.</p>
+      <h3>Las 4 categorías de delitos</h3>
+      <ul>
+        <li><strong>Delitos CID</strong> (confidencialidad, integridad, disponibilidad) — Arts. 2–6</li>
+        <li><strong>Delitos informáticos</strong> (falsificación y fraude) — Arts. 7–8</li>
+        <li><strong>Delitos de contenido</strong> (pornografía infantil) — Art. 9</li>
+        <li><strong>Delitos de propiedad intelectual</strong> — Art. 10</li>
+      </ul>
+    </div>
+    <div class="ch-grid">
+      <div class="ch-card"><div class="ch-n" style="color:var(--teal)">Cap. I · Art. 1</div><div class="ch-title">Terminología</div><div class="ch-arts">4 definiciones clave</div></div>
+      <div class="ch-card"><div class="ch-n" style="color:var(--blue)">Cap. II-A · Arts. 2–13</div><div class="ch-title">Derecho penal sustantivo</div><div class="ch-arts">9 tipos delictivos + responsabilidad + sanciones</div></div>
+      <div class="ch-card"><div class="ch-n" style="color:var(--emerald)">Cap. II-B · Arts. 14–22</div><div class="ch-title">Derecho procesal + Jurisdicción</div><div class="ch-arts">Medidas de investigación digital · aplica a CUALQUIER delito</div></div>
+      <div class="ch-card"><div class="ch-n" style="color:var(--amber)">Cap. III · Arts. 23–35</div><div class="ch-title">Cooperación internacional</div><div class="ch-arts">Extradición · asistencia mutua · Red 24/7</div></div>
+      <div class="ch-card"><div class="ch-n" style="color:var(--violet)">Cap. IV · Arts. 36–48</div><div class="ch-title">Cláusulas finales</div><div class="ch-arts">Firma · adhesión · reservas · denuncia</div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="card-title">Principios transversales clave</span><span class="bdg br">Examen</span></div>
+      <ul>
+        <li><strong>Art. 14 — Extensión universal:</strong> Las herramientas procesales aplican a CUALQUIER delito con evidencia electrónica, no solo ciberdelitos.</li>
+        <li><strong>Art. 16 — Conservación sin orden previa:</strong> Hasta 90 días, renovable, con obligación de confidencialidad. Fuente del Art. 218 bis CPP Chile.</li>
+        <li><strong>Art. 24 — Extradición:</strong> El Convenio puede ser base legal si no hay tratado bilateral. Pena mínima: 1 año en ambos Estados.</li>
+        <li><strong>Art. 28 — Uso limitado:</strong> La información de asistencia mutua solo puede usarse para los fines especificados.</li>
+        <li><strong>Art. 32 — Acceso transfronterizo libre:</strong> Solo si datos son públicos o hay consentimiento del autorizado a divulgarlos.</li>
+        <li><strong>Art. 35 — Red 24/7:</strong> Punto de contacto permanente para asistencia inmediata en investigaciones urgentes.</li>
+        <li><strong>Art. 42 — Reservas limitadas:</strong> Solo se permiten las reservas expresamente autorizadas en el texto.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── CAP I ── -->
+  <div id="sscap1" class="ssec">
+    <div class="study-wrap">
+      <div class="sidebar">
+        <div class="sb-ch"><span class="sb-ch-dot" style="background:var(--teal)"></span>Cap. I · Art. 1</div>
+        <button class="sbl" onclick="goArt('a1a',this)"><em>Art. 1(a)</em>Sistema informático</button>
+        <button class="sbl" onclick="goArt('a1b',this)"><em>Art. 1(b)</em>Datos informáticos</button>
+        <button class="sbl" onclick="goArt('a1c',this)"><em>Art. 1(c)</em>Datos de tráfico</button>
+        <button class="sbl" onclick="goArt('a1d',this)"><em>Art. 1(d)</em>Prestador de servicios</button>
+      </div>
+      <div>
+        <div class="card"><div class="card-head"><span class="card-title">Cap. I · Art. 1 — Terminología</span><span class="bdg bt">Art. 1</span></div><p>El Art. 1 es la base conceptual de todo el Convenio. Sus 4 definiciones aplican a todos los capítulos y determinan el ámbito de cada tipo penal y medida procesal.</p></div>
+        <div class="ab" id="a1a"><div class="an">Artículo 1(a) — Sistema informático</div><div class="at">La unidad central de protección del Convenio</div><div class="ab-body">Todo dispositivo aislado o conjunto de dispositivos interconectados cuya función sea el <strong>tratamiento automatizado de datos en ejecución de un programa</strong>.<br><br><strong>Abarca:</strong> PCs, servidores, smartphones, tablets, IoT (autos conectados, neveras inteligentes), sistemas SCADA, wearables, dispositivos embebidos.<br><br><strong>Clave:</strong> La definición es deliberadamente amplia para mantenerse vigente ante el avance tecnológico.</div></div>
+        <div class="ab" id="a1b"><div class="an">Artículo 1(b) — Datos informáticos</div><div class="at">Lo que se protege dentro del sistema</div><div class="ab-body">Toda representación de hechos, información o conceptos expresados en cualquier forma que se preste a tratamiento informático, <strong>incluidos los programas</strong>.<br><br><strong>Por qué importa la inclusión de programas:</strong> Un malware, ransomware o exploit es legalmente un dato informático. Esto permite aplicar el Art. 4 (daño a datos) cuando se instala código malicioso.<br><br><strong>Forma irrelevante:</strong> No importa el formato (texto, binario, imagen, audio).</div></div>
+        <div class="ab" id="a1c"><div class="an">Artículo 1(c) — Datos sobre el tráfico</div><div class="at">Los metadatos de las comunicaciones (≠ contenido)</div><div class="ab-body">Datos relativos a una comunicación que indiquen el <strong>origen, destino, itinerario, hora, fecha, tamaño, duración o tipo del servicio</strong>.<br><br><strong>Distinción crítica:</strong> Saber que A le escribió a B a las 3am desde cerca del lugar del crimen = tráfico. Leer lo que dijeron = contenido. Tienen regímenes procesales distintos: el contenido (Art. 21) requiere delito grave; el tráfico (Art. 20) no.</div></div>
+        <div class="ab" id="a1d"><div class="an">Artículo 1(d) — Prestador de servicios</div><div class="at">El intermediario digital obligado a cooperar</div><div class="ab-body">(i) Toda entidad que ofrezca <strong>comunicación</strong> por sistemas informáticos; (ii) toda entidad que <strong>procese o almacene datos</strong> en nombre de ese servicio o sus usuarios.<br><br><strong>Abarca:</strong> ISPs, operadoras, redes sociales, servicios de email, cloud computing, alojamiento web, VPNs, CDNs, apps de mensajería, servidores de videojuegos online.<br><br><strong>Por qué importa:</strong> Arts. 17, 18, 20 y 21 obligan a estos prestadores a cooperar con las autoridades en investigaciones.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DELITOS CID ── -->
+  <div id="sscid" class="ssec">
+    <div class="study-wrap">
+      <div class="sidebar">
+        <div class="sb-ch"><span class="sb-ch-dot" style="background:var(--teal)"></span>Cap. II-A · Arts. 2–6</div>
+        <button class="sbl" onclick="goArt('a2',this)"><em>Art. 2</em>Acceso ilícito</button>
+        <button class="sbl" onclick="goArt('a3',this)"><em>Art. 3</em>Interceptación ilícita</button>
+        <button class="sbl" onclick="goArt('a4',this)"><em>Art. 4</em>Interferencia en datos</button>
+        <button class="sbl" onclick="goArt('a5',this)"><em>Art. 5</em>Interferencia en sistema</button>
+        <button class="sbl" onclick="goArt('a6',this)"><em>Art. 6</em>Abuso de dispositivos</button>
+      </div>
+      <div>
+        <div class="card"><div class="card-head"><span class="card-title">Cap. II-A · Arts. 2–6 — Delitos CID</span></div><p>Los delitos CID protegen los sistemas en tres dimensiones: que solo los autorizados accedan (<strong>confidencialidad</strong>), que los datos no sean manipulados (<strong>integridad</strong>), y que el sistema funcione (<strong>disponibilidad</strong>).</p></div>
+        <div class="ab" id="a2"><div class="an">Artículo 2 — Acceso ilícito</div><div class="at">Hacking — la intrusión no autorizada</div><div class="ab-body"><strong>Tipo base mínimo:</strong> Acceso deliberado e ilegítimo a todo o parte de un sistema informático.<br><br><strong>Elementos que los Estados PUEDEN (no deben) añadir:</strong><br>— Infracción de medidas de seguridad<br>— Intención de obtener datos u otra intención delictiva<br>— Que el sistema esté conectado a otro sistema<br><br><strong>Chile (Ley 21.459 Art. 2):</strong> Tipo base sin ánimo especial + ánimo como agravante. Mejora la Ley 19.223 que exigía "ánimo de apoderarse" en el tipo base (casi imposible de probar).</div></div>
+        <div class="ab" id="a3"><div class="an">Artículo 3 — Interceptación ilícita</div><div class="at">Escuchas digitales incluyendo ataques TEMPEST</div><div class="ab-body">Interceptación deliberada e ilegítima, <strong>por medios técnicos</strong>, de transmisiones NO PÚBLICAS de datos, incluyendo las <strong>emisiones electromagnéticas</strong>.<br><br><strong>Cubren:</strong> Sniffers de red · ataques man-in-the-middle (MITM) · ataques TEMPEST (captura de datos a través de emanaciones del monitor/teclado) · Van Eck phreaking.<br><br><strong>Chile (Ley 21.459 Art. 3):</strong> Incluye ambas hipótesis: transmisiones no públicas + emisiones electromagnéticas. La Ley 19.223 no cubría TEMPEST.</div></div>
+        <div class="ab" id="a4"><div class="an">Artículo 4 — Interferencia en los datos</div><div class="at">Daño, borrado o alteración de datos almacenados</div><div class="ab-body">Dañar, borrar, deteriorar, <strong>alterar o suprimir</strong> datos informáticos deliberada e ilegítimamente.<br><br><strong>Facultad opcional:</strong> Los Estados PUEDEN exigir que se produzca <em>daño grave</em> como requisito adicional.<br><br><strong>Cubren:</strong> Malware que corrompe archivos · borrado de bases de datos · cifrado por ransomware (altera/hace inaccesibles los datos) · manipulación de registros contables o médicos.<br><br><strong>Chile (Ley 21.459 Art. 4):</strong> Ejerció la opción y exige "daño grave al titular".</div></div>
+        <div class="ab" id="a5"><div class="an">Artículo 5 — Interferencia en el sistema</div><div class="at">Sabotaje digital — DDoS y obstaculización del funcionamiento</div><div class="ab-body">Obstaculización grave del funcionamiento de un sistema mediante introducción, <strong>transmisión</strong>, daño, borrado, deterioro, alteración o supresión de datos.<br><br><strong>La clave para DDoS:</strong> La palabra <em>"transmisión"</em> cubre expresamente los ataques DDoS, que saturan el sistema con tráfico masivo sin insertar ni destruir datos.<br><br><strong>Diferencia con Art. 4:</strong> Art. 4 = datos dañados. Art. 5 = sistema no disponible (aunque los datos estén intactos).<br><br><strong>Chile (Ley 21.459 Art. 1):</strong> Incluye "transmisión". La Ley 19.223 no cubría los DDoS.</div></div>
+        <div class="ab" id="a6"><div class="an">Artículo 6 — Abuso de los dispositivos</div><div class="at">Herramientas de ataque — delito de preparación</div><div class="ab-body">Producir, vender, obtener, importar o distribuir dispositivos (incluidos programas) <strong>concebidos o adaptados PRINCIPALMENTE</strong> para cometer los delitos de los Arts. 2–5, con intención de que sean usados para ello.<br><br><strong>La salvaguarda — "principalmente":</strong> Herramientas de pen-testing (nmap, metasploit, Burp Suite) no quedan tipificadas si su función principal es legítima. Solo las herramientas <em>diseñadas principalmente para atacar</em>.<br><br><strong>Chile (Ley 21.459 Art. 8):</strong> Usa la misma salvaguarda.</div><span class="pena pt">Delito de preparación · no requiere consumación del ataque principal</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── OTROS DELITOS ── -->
+  <div id="ssotros" class="ssec">
+    <div class="study-wrap">
+      <div class="sidebar">
+        <div class="sb-ch"><span class="sb-ch-dot" style="background:var(--blue)"></span>Cap. II-A · Arts. 7–10</div>
+        <button class="sbl" onclick="goArt('a7',this)"><em>Art. 7</em>Falsificación informática</button>
+        <button class="sbl" onclick="goArt('a8',this)"><em>Art. 8</em>Fraude informático</button>
+        <button class="sbl" onclick="goArt('a9',this)"><em>Art. 9</em>Pornografía infantil</button>
+        <button class="sbl" onclick="goArt('a10',this)"><em>Art. 10</em>Propiedad intelectual</button>
+      </div>
+      <div>
+        <div class="card"><div class="card-head"><span class="card-title">Cap. II-A · Arts. 7–10 — Otros delitos informáticos</span></div><p>Falsificación y fraude informático (nuevas formas digitales de delitos patrimoniales), pornografía infantil en internet (único delito de contenido del Convenio principal), e infracciones de propiedad intelectual en línea.</p></div>
+        <div class="slabel">Título 2 — Delitos informáticos</div>
+        <div class="ab b" id="a7"><div class="an">Artículo 7 — Falsificación informática</div><div class="at">Creación de datos digitales no auténticos</div><div class="ab-body">Introducir, alterar, borrar o suprimir datos para generar datos <strong>no auténticos, con intención de que sean tomados como auténticos o usados para efectos jurídicos</strong>.<br><br><strong>No requiere perjuicio consumado:</strong> La intención es suficiente.<br><br><strong>Ejemplos:</strong> Alterar contrato digital · modificar certificado médico electrónico · falsificar firma electrónica · adulterar declaración tributaria al SII.<br><br><strong>Chile (Ley 21.459 Art. 5):</strong> Añade agravante por empleado público.</div></div>
+        <div class="ab b" id="a8"><div class="an">Artículo 8 — Fraude informático</div><div class="at">Manipulación de sistemas para obtener beneficio económico</div><div class="ab-body">Causar perjuicio patrimonial mediante (a) <strong>manipulación de datos</strong> o (b) <strong>interferencia en sistemas</strong>, con intención de obtener beneficio económico no autorizado.<br><br><strong>Diferencia fundamental con la estafa:</strong><br>— Estafa: engaño → error en la víctima → disposición patrimonial<br>— Fraude informático: <em>NO HAY PERSONA ENGAÑADA</em>, se manipula directamente el sistema<br><br><strong>Chile (Ley 21.459 Art. 7):</strong> Sistema escalonado de penas por monto (hasta 4 UTM / 4–40 / 40–400 / más de 400 UTM).</div></div>
+        <div class="slabel">Título 3 — Delitos de contenido</div>
+        <div class="ab a" id="a9"><div class="an">Artículo 9 — Pornografía infantil</div><div class="at">El único delito de contenido del Convenio principal</div><div class="ab-body">Producción, oferta, distribución, transmisión, obtención y posesión de pornografía infantil a través de sistemas informáticos. Incluye a personas que <strong>parecen menores</strong> e imágenes realistas.<br><br><strong>Reservas permitidas:</strong> No aplicarlo a representaciones de personas que solo parecen menores · excluir imágenes generadas digitalmente · excluir posesión por/para el propio menor.</div></div>
+        <div class="slabel">Título 4 — Propiedad intelectual</div>
+        <div class="ab v" id="a10"><div class="an">Artículo 10 — Propiedad intelectual y derechos afines</div><div class="at">Piratería digital a escala comercial</div><div class="ab-body">Infracciones de derechos de propiedad intelectual cometidas <strong>deliberadamente y a escala comercial</strong> a través de sistemas informáticos.<br><br><strong>Doble requisito:</strong><br>— <em>Deliberadamente:</em> excluye errores técnicos<br>— <em>Comercialmente:</em> excluye el uso personal sin fines de lucro<br><br><strong>Reserva posible:</strong> Si el Estado dispone de recursos civiles o administrativos efectivos.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RESPONSABILIDAD ── -->
+  <div id="ssresp" class="ssec">
+    <div class="study-wrap">
+      <div class="sidebar">
+        <div class="sb-ch"><span class="sb-ch-dot" style="background:var(--emerald)"></span>Cap. II-A · Arts. 11–13</div>
+        <button class="sbl" onclick="goArt('a11',this)"><em>Art. 11</em>Tentativa y complicidad</button>
+        <button class="sbl" onclick="goArt('a12',this)"><em>Art. 12</em>Personas jurídicas</button>
+        <button class="sbl" onclick="goArt('a13',this)"><em>Art. 13</em>Sanciones y medidas</button>
+      </div>
+      <div>
+        <div class="card"><div class="card-head"><span class="card-title">Cap. II-A · Arts. 11–13 — Responsabilidad y sanciones</span></div><p>Completan el cuadro de responsabilidad penal: formas de participación (tentativa y complicidad), extensión a personas jurídicas, y el estándar de proporcionalidad de las sanciones.</p></div>
+        <div class="ab e" id="a11"><div class="an">Artículo 11 — Tentativa y complicidad</div><div class="at">Formas de participación criminal</div><div class="ab-body">Cada Parte tipificará: (1) la <strong>complicidad dolosa</strong> en los delitos de los Arts. 2–10; (2) la <strong>tentativa dolosa</strong> de esos delitos.<br><br><strong>Reservas permitidas:</strong> Los Estados PUEDEN no aplicar la tentativa a los Arts. 3 (interceptación) y 4 (interferencia en datos), porque la tentativa puede confundirse con monitoreo legítimo de la propia red.</div></div>
+        <div class="ab e" id="a12"><div class="an">Artículo 12 — Responsabilidad de las personas jurídicas</div><div class="at">Las empresas también responden</div><div class="ab-body">Las personas jurídicas pueden ser responsables cuando sus directivos con <strong>poder de decisión</strong> cometan delitos del Convenio en su nombre y beneficio.<br><br><strong>3 opciones:</strong> Responsabilidad PENAL (Chile: Ley 20.393) · CIVIL · ADMINISTRATIVA.<br><br><strong>No excluyente:</strong> La responsabilidad de la empresa no excluye la de la persona física.<br><br><strong>Chile (Ley 21.459 Art. 16):</strong> Modifica la Ley 20.393 para incluir los ciberdelitos como delitos base.</div></div>
+        <div class="ab e" id="a13"><div class="an">Artículo 13 — Sanciones y medidas</div><div class="at">Efectivas, proporcionadas y disuasorias</div><div class="ab-body">Las sanciones deben ser <strong>efectivas, proporcionadas y disuasorias</strong>, incluyendo penas privativas de libertad.<br><br><strong>Para personas jurídicas:</strong> Sanciones penales o no penales, incluyendo sanciones pecuniarias.<br><br><strong>Sin mínimos concretos:</strong> El Convenio NO fija penas mínimas en años. Solo en el Art. 24 (extradición) se establece el umbral de 1 año.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PROCEDIMIENTO ── -->
+  <div id="ssproc" class="ssec">
+    <div class="study-wrap">
+      <div class="sidebar">
+        <div class="sb-ch"><span class="sb-ch-dot" style="background:var(--emerald)"></span>Cap. II-B · Arts. 14–22</div>
+        <button class="sbl" onclick="goArt('a14',this)"><em>Art. 14</em>Ámbito de aplicación</button>
+        <button class="sbl" onclick="goArt('a15',this)"><em>Art. 15</em>Salvaguardias</button>
+        <button class="sbl" onclick="goArt('a16',this)"><em>Art. 16</em>Conservación inmediata</button>
+        <button class="sbl" onclick="goArt('a17',this)"><em>Art. 17</em>Datos tráfico conserv.</button>
+        <button class="sbl" onclick="goArt('a18',this)"><em>Art. 18</em>Orden de presentación</button>
+        <button class="sbl" onclick="goArt('a19',this)"><em>Art. 19</em>Registro y confiscación</button>
+        <button class="sbl" onclick="goArt('a20',this)"><em>Art. 20</em>Tráfico tiempo real</button>
+        <button class="sbl" onclick="goArt('a21',this)"><em>Art. 21</em>Contenido tiempo real</button>
+        <button class="sbl" onclick="goArt('a22',this)"><em>Art. 22</em>Jurisdicción</button>
+      </div>
+      <div>
+        <div class="card"><div class="card-head"><span class="card-title">Cap. II-B · Arts. 14–22 — Derecho procesal penal</span></div><p>La sección más innovadora: herramientas procesales digitales para investigar delitos. El <strong>Art. 14</strong> las extiende a CUALQUIER delito con evidencia electrónica — no solo ciberdelitos.</p></div>
+        <div class="ab e" id="a14"><div class="an">Artículo 14 — Ámbito de aplicación</div><div class="at">Las herramientas procesales aplican más allá de los ciberdelitos</div><div class="ab-body">Las medidas de los Arts. 16–21 aplican a: (a) delitos del Convenio; (b) otros delitos por sistemas informáticos; <strong>(c) obtención de pruebas electrónicas de cualquier delito penal</strong>.<br><br><strong>El punto (c) es revolucionario:</strong> Un homicidio, tráfico de drogas, terrorismo, fraude fiscal — si hay evidencia digital, aplican las herramientas del Convenio. Es instrumento universal de investigación digital.</div></div>
+        <div class="ab e" id="a15"><div class="an">Artículo 15 — Condiciones y salvaguardias</div><div class="at">Los límites de la investigación digital</div><div class="ab-body">Toda medida procesal debe estar sujeta a condiciones y salvaguardias del derecho interno, incluyendo <strong>supervisión judicial u otras formas independientes de control</strong>, motivación de la medida, y limitación del alcance y duración.<br><br>La supervisión no tiene que ser judicial, pero sí independiente del órgano que aplica la medida.</div></div>
+        <div class="ab e" id="a16"><div class="an">Artículo 16 — Conservación inmediata de datos almacenados</div><div class="at">La herramienta más importante: preservar antes de que se borre</div><div class="ab-body">Ordenar la conservación inmediata de datos almacenados durante hasta <strong>90 días, renovable</strong>, sin necesidad de orden judicial previa.<br><br><strong>Obligación de confidencialidad:</strong> El destinatario NO puede avisar al investigado.<br><br><strong>Solo conservación, no entrega:</strong> La entrega posterior se hace por Arts. 18–19 (requieren procedimiento separado).<br><br><strong>Chile:</strong> Art. 218 bis CPP, incorporado por Art. 18 Ley 21.459. Mismo plazo, misma confidencialidad.</div><span class="pena pt">Hasta 90 días · renovable · sin orden judicial previa · confidencialidad obligatoria</span></div>
+        <div class="ab e" id="a17"><div class="an">Artículo 17 — Conservación de datos de tráfico</div><div class="at">Rastrear la cadena completa de comunicación</div><div class="ab-body">Cuando se aplica el Art. 16, el prestador debe divulgar de inmediato los datos de tráfico suficientes para <strong>identificar a los prestadores intermediarios</strong> y la vía de la comunicación.<br><br>Si la comunicación pasó por múltiples servidores (ISP → CDN → VPN → destino), el Art. 17 permite identificar todos los eslabones de la cadena.</div></div>
+        <div class="ab e" id="a18"><div class="an">Artículo 18 — Orden de presentación</div><div class="at">Obligar a entregar datos o información de suscriptores</div><div class="ab-body">Permite ordenar a una persona o prestador que entregue datos específicos o <strong>datos de suscriptores</strong>: nombre, dirección, teléfono, dirección IP, email, datos de facturación y pago.<br><br><strong>¿Por qué son menos sensibles que el contenido?</strong> Son datos de registro (quién eres), no de comunicación (qué dijiste). Régimen procesal más flexible que el Art. 21.</div></div>
+        <div class="ab e" id="a19"><div class="an">Artículo 19 — Registro y confiscación</div><div class="at">Allanar sistemas y confiscar evidencia digital</div><div class="ab-body">Permite registrar sistemas informáticos, acceder a datos almacenados y confiscarlos.<br><br><strong>Innovación clave:</strong> Si los datos están en otro sistema conectado <em>dentro del mismo territorio</em>, puede ampliarse el registro a ese sistema.<br><br><strong>Límite:</strong> No aplica transfronterizamente. Para datos en otro país → Art. 31.</div></div>
+        <div class="ab e" id="a20"><div class="an">Artículo 20 — Tráfico en tiempo real</div><div class="at">Metadatos en vivo — menos intrusivo</div><div class="ab-body">Recopilación en tiempo real de <strong>datos de TRÁFICO (metadatos)</strong> de comunicaciones específicas. Los prestadores deben cooperar técnicamente.<br><br><strong>Diferencia con Art. 21:</strong> Solo metadatos (quién, cuándo, desde dónde), NO el contenido del mensaje. Por eso no requiere que el delito sea "grave".</div></div>
+        <div class="ab e" id="a21"><div class="an">Artículo 21 — Interceptación de datos relativos al contenido</div><div class="at">Escuchas en tiempo real — la medida más intrusiva</div><div class="ab-body">Interceptación en tiempo real del <strong>CONTENIDO de comunicaciones</strong>, limitada a <strong>"determinados delitos GRAVES"</strong> definidos en el derecho interno.<br><br>Los prestadores deben cooperar y asistir técnicamente.<br><br><strong>Chile:</strong> Art. 12 Ley 21.459 remite a Arts. 222–225 y 226 CPP para la interceptación en ciberdelitos.</div></div>
+        <div class="ab e" id="a22"><div class="an">Artículo 22 — Jurisdicción</div><div class="at">4 criterios de competencia</div><div class="ab-body">(a) <strong>Territorial:</strong> delito en su territorio<br>(b) <strong>Buques del pabellón</strong><br>(c) <strong>Aeronaves matriculadas</strong><br>(d) <strong>Personalidad activa:</strong> su nacional cometió el delito en el extranjero, si es punible allí o fuera de todo Estado<br><br><strong>Conflictos:</strong> Los Estados celebrarán consultas. No hay regla automática de prioridad ni tribunal arbitral.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── COOPERACIÓN ── -->
+  <div id="sscoop" class="ssec">
+    <div class="study-wrap">
+      <div class="sidebar">
+        <div class="sb-ch"><span class="sb-ch-dot" style="background:var(--amber)"></span>Cap. III · Arts. 23–29</div>
+        <button class="sbl" onclick="goArt('a23',this)"><em>Art. 23</em>Principio general</button>
+        <button class="sbl" onclick="goArt('a24',this)"><em>Art. 24</em>Extradición</button>
+        <button class="sbl" onclick="goArt('a25',this)"><em>Art. 25</em>Asistencia mutua general</button>
+        <button class="sbl" onclick="goArt('a26',this)"><em>Art. 26</em>Información espontánea</button>
+        <button class="sbl" onclick="goArt('a27',this)"><em>Arts. 27–28</em>Procedimientos</button>
+        <button class="sbl" onclick="goArt('a29',this)"><em>Art. 29</em>Conservación transfronteriza</button>
+        <div class="sb-ch"><span class="sb-ch-dot" style="background:var(--amber)"></span>Cap. III · Arts. 30–35</div>
+        <button class="sbl" onclick="goArt('a30',this)"><em>Art. 30</em>Divulgación tráfico transfr.</button>
+        <button class="sbl" onclick="goArt('a31',this)"><em>Art. 31</em>Acceso datos almacenados</button>
+        <button class="sbl" onclick="goArt('a32',this)"><em>Art. 32</em>Acceso transfronterizo libre</button>
+        <button class="sbl" onclick="goArt('a33',this)"><em>Arts. 33–34</em>Intercepción transfronteriza</button>
+        <button class="sbl" onclick="goArt('a35',this)"><em>Art. 35</em>Red 24/7</button>
+      </div>
+      <div>
+        <div class="card"><div class="card-head"><span class="card-title">Cap. III · Arts. 23–35 — Cooperación internacional</span></div><p>El corazón operativo del Convenio. Los ciberdelitos son inherentemente transfronterizos: el atacante puede estar en un país, los servidores en otro y las víctimas en un tercero.</p></div>
+        <div class="ab a" id="a23"><div class="an">Artículo 23 — Principio general de cooperación</div><div class="at">Cooperar en la mayor medida posible</div><div class="ab-body">Las Partes cooperarán en la <strong>mayor medida posible</strong> en investigaciones de ciberdelitos y para obtener <strong>pruebas electrónicas de cualquier delito penal</strong>.</div></div>
+        <div class="ab a" id="a24"><div class="an">Artículo 24 — Extradición</div><div class="at">Entrega de personas para ser juzgadas</div><div class="ab-body">Los delitos del Convenio dan lugar a extradición. El Convenio puede ser <strong>base legal</strong> si no hay tratado bilateral.<br><br><strong>Requisitos:</strong> Doble incriminación + pena mínima de <strong>1 año</strong> en ambos Estados.<br><br><strong>Principio de especialidad:</strong> Solo puede juzgarse por los delitos que motivaron la extradición.<br><br><strong>Aut dedere aut judicare:</strong> Si no se extradita al nacional, debe juzgarse en el propio Estado.</div></div>
+        <div class="ab a" id="a25"><div class="an">Artículo 25 — Asistencia mutua general</div><div class="at">Cooperar en investigaciones del otro Estado</div><div class="ab-body">Asistencia mutua en la mayor medida posible. Solicitudes pueden tramitarse de forma urgente y canalizarse por <strong>INTERPOL</strong> u otros organismos internacionales.</div></div>
+        <div class="ab a" id="a26"><div class="an">Artículo 26 — Información espontánea</div><div class="at">Compartir sin que te lo pidan</div><div class="ab-body">Un Estado <strong>PUEDE</strong> (facultad, no obligación) transmitir espontáneamente información obtenida en sus investigaciones si considera que puede ayudar a otro Estado. El Estado que transmite puede imponer condiciones de uso.</div></div>
+        <div class="ab a" id="a27"><div class="an">Artículos 27–28 — Procedimientos y confidencialidad</div><div class="at">Cómo se tramita la asistencia mutua</div><div class="ab-body"><strong>Art. 27:</strong> Solicitudes a la autoridad central designada. El Estado requerido puede aplazar si interfiere con investigación propia, o denegar si afecta soberanía o seguridad.<br><br><strong>Art. 28 — Uso limitado:</strong> La información obtenida <em>solo puede usarse para los fines especificados</em> en la solicitud. Genera confianza y fomenta la cooperación.</div></div>
+        <div class="ab a" id="a29"><div class="an">Artículo 29 — Conservación transfronteriza urgente</div><div class="at">Preservar evidencia en otro Estado mientras llega la solicitud formal</div><div class="ab-body">Un Estado puede pedir a otro que conserve datos en su territorio durante <strong>mínimo 60 días</strong> mientras prepara la solicitud formal de asistencia.<br><br><strong>Por qué es vital:</strong> Los logs de servidores se borran automáticamente. Sin el Art. 29, la evidencia desaparecería antes de que llegue la solicitud formal.</div><span class="pena pa">Mínimo 60 días · urgente · sin esperar solicitud formal completa</span></div>
+        <div class="ab a" id="a30"><div class="an">Artículo 30 — Divulgación de datos de tráfico transfronterizos</div><div class="at">Identificar la cadena internacional de comunicación</div><div class="ab-body">Cuando se aplica el Art. 29 y se descubren prestadores intermediarios en otro Estado, deben divulgarse de inmediato los datos de tráfico suficientes para <strong>identificar a ese prestador</strong> en el otro país.</div></div>
+        <div class="ab a" id="a31"><div class="an">Artículo 31 — Acceso a datos almacenados en otro Estado</div><div class="at">Solicitar registro y obtención de datos extranjeros</div><div class="ab-body">Un Estado puede solicitar a otro que <strong>registre, acceda, obtenga o divulgue</strong> datos almacenados en su territorio.<br><br>El Estado requerido puede exigir doble incriminación. Diferencia con Art. 19: ese es acceso unilateral interno; el Art. 31 es multilateral mediante solicitud.</div></div>
+        <div class="ab a" id="a32"><div class="an">Artículo 32 — Acceso transfronterizo sin autorización previa</div><div class="at">Los únicos dos casos de acceso libre</div><div class="ab-body">Solo se puede acceder a datos en otro Estado sin su autorización en:<br>(a) Datos <strong>públicamente disponibles</strong><br>(b) La persona legalmente autorizada da su <strong>consentimiento voluntario</strong><br><br><strong>Controversia:</strong> El caso (b) genera debate sobre si una empresa privada puede autorizar acceso a datos de sus usuarios sin notificar al Estado territorial. Base del CLOUD Act de EE.UU.</div></div>
+        <div class="ab a" id="a33"><div class="an">Artículos 33–34 — Intercepción en tiempo real transfronteriza</div><div class="at">Tráfico y contenido en vivo entre Estados</div><div class="ab-body"><strong>Art. 33:</strong> Asistencia mutua para recopilación de <strong>datos de TRÁFICO</strong> en tiempo real transfronterizo.<br><br><strong>Art. 34:</strong> Asistencia mutua para interceptación del <strong>CONTENIDO</strong> en tiempo real transfronterizo. La más intrusiva: solo donde lo permita el derecho interno y los tratados aplicables.</div></div>
+        <div class="ab a" id="a35"><div class="an">Artículo 35 — Red 24/7</div><div class="at">Punto de contacto permanente — herramienta operativa clave</div><div class="ab-body">Cada Estado designa un <strong>punto de contacto disponible las 24 horas, 7 días a la semana</strong>.<br><br><strong>Puede asistir en:</strong> Asesoramiento técnico · conservación urgente de datos · obtención de pruebas · localización de sospechosos · información jurídica.<br><br><strong>Puede ejecutar directamente</strong> las medidas solicitadas si el derecho interno lo permite.</div><span class="pena pa">24h/7 días · respuesta inmediata · puede ejecutar medidas directamente</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CLÁUSULAS FINALES ── -->
+  <div id="ssfinal" class="ssec">
+    <div class="study-wrap">
+      <div class="sidebar">
+        <div class="sb-ch"><span class="sb-ch-dot" style="background:var(--violet)"></span>Cap. IV · Arts. 36–48</div>
+        <button class="sbl" onclick="goArt('a36',this)"><em>Arts. 36–37</em>Firma y adhesión</button>
+        <button class="sbl" onclick="goArt('a38',this)"><em>Art. 38</em>Consecuencias</button>
+        <button class="sbl" onclick="goArt('a40',this)"><em>Art. 40</em>Declaraciones</button>
+        <button class="sbl" onclick="goArt('a41',this)"><em>Art. 41</em>Cláusula federal</button>
+        <button class="sbl" onclick="goArt('a42',this)"><em>Art. 42</em>Reservas</button>
+        <button class="sbl" onclick="goArt('a44',this)"><em>Art. 44</em>Enmiendas / Protocolo</button>
+        <button class="sbl" onclick="goArt('a45',this)"><em>Arts. 45–48</em>Disposiciones finales</button>
+      </div>
+      <div>
+        <div class="card"><div class="card-head"><span class="card-title">Cap. IV · Arts. 36–48 — Cláusulas finales</span></div><p>Regulan los aspectos formales: firma, adhesión, reservas permitidas, entrada en vigor, enmiendas y denuncia del tratado.</p></div>
+        <div class="ab v" id="a36"><div class="an">Artículos 36–37 — Firma y adhesión</div><div class="at">Quién puede ser Parte del Convenio</div><div class="ab-body"><strong>Art. 36:</strong> Abierto a firma el 23 nov. 2001. Entró en vigor el 1 jul. 2004. Firmaron originalmente también Canadá, EE.UU., Japón y Sudáfrica (no miembros del Consejo de Europa).<br><br><strong>Art. 37:</strong> El Comité de Ministros puede <em>invitar</em> a cualquier Estado no miembro a adherirse, previa consulta a las Partes. Esta cláusula le dio carácter global al Convenio.</div></div>
+        <div class="ab v" id="a38"><div class="an">Artículo 38 — Consecuencias del Convenio</div><div class="at">Relación con otros tratados</div><div class="ab-body">El Convenio <strong>complementa</strong> los tratados multilaterales y bilaterales de asistencia mutua entre las Partes, <em>sin limitarlos</em>. Si hay un tratado bilateral más favorable, sigue aplicándose. El Convenio es instrumento adicional, no sustitutivo.</div></div>
+        <div class="ab v" id="a40"><div class="an">Artículo 40 — Declaraciones</div><div class="at">Las opciones que los Estados pueden ejercer</div><div class="ab-body">Los Estados pueden ejercer las <em>opciones expresamente autorizadas</em> en el texto mediante declaración al Secretario General. Ejemplos: exigir vulneración de seguridad para el Art. 2, exigir daño grave para el Art. 4, reservas sobre Art. 9 (imágenes no reales).</div></div>
+        <div class="ab v" id="a41"><div class="an">Artículo 41 — Cláusula federal</div><div class="at">Para Estados con estructura federal</div><div class="ab-body">Para EE.UU., Alemania, Australia, México, etc.: el Gobierno central puede asumir las obligaciones incluso cuando su implementación sea competencia de los estados federados. En algunos casos puede limitar sus compromisos a lo que regule federalmente.</div></div>
+        <div class="ab v" id="a42"><div class="an">Artículo 42 — Reservas</div><div class="at">El límite del sistema de reservas</div><div class="ab-body"><strong>"Sólo podrán formularse las reservas expresamente autorizadas en el presente Convenio."</strong><br><br>No son admisibles reservas generales. Esto protege la coherencia del sistema: si un Estado pudiera reservarse cualquier obligación, el Convenio perdería su función armonizadora.</div></div>
+        <div class="ab v" id="a44"><div class="an">Artículo 44 — Enmiendas y Protocolo Adicional</div><div class="at">Protocolo STE N° 189 (2003) — xenofobia y racismo</div><div class="ab-body">El <strong>Protocolo Adicional STE N° 189</strong> (abierto el 28 ene. 2003) añade una quinta categoría: actos de <strong>naturaleza racista y xenófoba por sistemas informáticos</strong>, incluyendo distribución de material, insultos, amenazas y negación del genocidio.<br><br><strong>Es OPCIONAL:</strong> Un Estado puede ratificar el Convenio sin adherirse al Protocolo.</div></div>
+        <div class="ab v" id="a45"><div class="an">Artículos 45–48 — Disposiciones finales</div><div class="at">Diferencias, denuncia y notificaciones</div><div class="ab-body"><strong>Art. 45:</strong> Diferencias resueltas por negociación o Comité de Ministros.<br><strong>Art. 46:</strong> Reuniones periódicas de las Partes.<br><strong>Art. 47 — Denuncia:</strong> Un Estado puede retirarse con <strong>3 meses de preaviso</strong> al Secretario General del Consejo de Europa.<br><strong>Art. 48:</strong> El Secretario General notifica a todos sobre firmas, ratificaciones, adhesiones, reservas y denuncias.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FLASHCARDS ── -->
+  <div id="sscards" class="ssec">
+    <div class="fc-wrap">
+      <div class="fc-top">
+        <div class="fc-filters" id="fcfiltros">
+          <button class="flt on" onclick="fcFilter('all',this)">Todas (28)</button>
+          <button class="flt" onclick="fcFilter('c1',this)">Cap. I</button>
+          <button class="flt" onclick="fcFilter('c2a',this)">Cap. II-A</button>
+          <button class="flt" onclick="fcFilter('c2b',this)">Cap. II-B</button>
+          <button class="flt" onclick="fcFilter('c3',this)">Cap. III</button>
+        </div>
+        <span class="fc-counter" id="fcc">1 / 28</span>
+      </div>
+      <div class="fc-prog-wrap"><div class="fc-prog" id="fcp" style="width:3.6%"></div></div>
+      <div class="fc-scene" id="fc-scene" onclick="fcFlip()">
+        <div class="fc-inner" id="fc-inner">
+          <div class="fc-face fc-front">
+            <div class="fc-row">
+              <span class="fc-badge" id="fc-badge">Art. 1(a)</span>
+              <span class="fc-hint">clic para voltear ↻</span>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+              <div class="fc-term" id="fc-term">Sistema informático</div>
+              <div class="fc-preview" id="fc-preview">Vista previa…</div>
+            </div>
+            <div class="fc-tag" id="fc-tag-f">Cap. I · Definiciones</div>
+          </div>
+          <div class="fc-face fc-back">
+            <div class="fc-back-lbl" id="fc-back-lbl">Cap. I · Definiciones</div>
+            <div class="fc-def" id="fc-def">…</div>
+            <div class="fc-back-hint">clic para volver ↩</div>
+          </div>
+        </div>
+      </div>
+      <div class="fc-nav">
+        <button class="fc-arrow" onclick="fcGo(-1,event)">←</button>
+        <button class="fc-flip-btn" onclick="fcFlip()">Voltear ↻</button>
+        <button class="fc-arrow" onclick="fcGo(1,event)">→</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CHILE ↔ BUDAPEST ── -->
+  <div id="sschile" class="ssec">
+    <div class="card"><div class="card-head"><span class="card-title">Chile ↔ Convenio de Budapest — Artículo a artículo</span><span class="bdg be">Comparativa</span></div><p>La Ley 21.459 fue diseñada para adecuar el derecho chileno al Convenio de Budapest, corrigiendo las deficiencias de la Ley 19.223 de 1993.</p></div>
+    <div class="ab e"><div class="an">Conv. Art. 2 → Ley 21.459 Art. 2 — Acceso ilícito</div><div class="ab-body">La Ley 19.223 exigía "ánimo de apoderarse" en el tipo base (casi imposible de probar). La Ley 21.459 adopta el estándar del Convenio: tipo base sin ánimo especial + el ánimo como hipótesis agravada con mayor pena.</div></div>
+    <div class="ab e"><div class="an">Conv. Art. 3 → Ley 21.459 Art. 3 — Interceptación ilícita</div><div class="ab-body">Chile implementó ambas hipótesis: transmisiones no públicas Y emisiones electromagnéticas (ataques TEMPEST). La Ley 19.223 no contemplaba TEMPEST, dejando un vacío para ataques sofisticados.</div></div>
+    <div class="ab e"><div class="an">Conv. Art. 4 → Ley 21.459 Art. 4 — Interferencia en datos</div><div class="ab-body">El Convenio permite exigir daño grave. Chile ejerció esa opción: el Art. 4 requiere "daño grave al titular". Aporta proporcionalidad, elevando el umbral de la Ley 19.223 que sancionaba cualquier alteración.</div></div>
+    <div class="ab e"><div class="an">Conv. Art. 5 → Ley 21.459 Art. 1 — Interferencia en el sistema (DDoS)</div><div class="ab-body">Chile implementó la "transmisión" como conducta típica, cerrando el vacío de la Ley 19.223 que no cubría los DDoS. El Art. 1 de la Ley 21.459 es el primer tipo en la ley precisamente porque era la mayor laguna.</div></div>
+    <div class="ab e"><div class="an">Conv. Art. 6 → Ley 21.459 Art. 8 — Abuso de dispositivos</div><div class="ab-body">Chile usa la misma salvaguarda: "creadas PRINCIPALMENTE para" delinquir. Protege las herramientas legítimas de pen-testing y ciberseguridad ofensiva. La Ley 19.223 no tenía ningún delito de preparación equivalente.</div></div>
+    <div class="ab e"><div class="an">Conv. Arts. 7–8 → Ley 21.459 Arts. 5 y 7 — Falsificación y fraude</div><div class="ab-body">La Ley 19.223 no tipificaba ninguno. Chile añadió mejoras propias: agravante por empleado público en el Art. 5, y sistema escalonado de penas por monto UTM en el Art. 7 (no requerido por el Convenio).</div></div>
+    <div class="ab e"><div class="an">Conv. Art. 12 → Ley 21.459 Art. 16 + Ley 20.393 — Personas jurídicas</div><div class="ab-body">Chile usa la vía penal (responsabilidad de personas jurídicas mediante la Ley 20.393). El Art. 19 de la Ley 21.459 modifica la Ley 20.393 para incluir los ciberdelitos como nuevos delitos base.</div></div>
+    <div class="ab e"><div class="an">Conv. Art. 16 → CPP Art. 218 bis — Conservación inmediata</div><div class="ab-body">Fuente directa del Art. 218 bis del CPP, incorporado por el Art. 18 de la Ley 21.459. Mismo plazo (90 días, prorrogables), misma lógica (sin orden judicial previa), misma confidencialidad obligatoria.</div></div>
+    <div class="ab e"><div class="an">Conv. Arts. 20–21 → Ley 21.459 Art. 12 → CPP Arts. 222–226</div><div class="ab-body">Chile remite a los Arts. 222–225 CPP (interceptación) y 226 (fotografía/filmación). Añadió medida propia sin equivalente en el Convenio: <strong>agentes encubiertos digitales</strong> en canales cerrados (chats privados, dark web).</div></div>
+    <div class="ab e"><div class="an">Conv. Art. 35 → CSIRT / PDI — Red 24/7</div><div class="ab-body">Chile cumple la obligación del punto de contacto permanente institucionalmente a través del CSIRT nacional y la PDI. La Ley 21.459 no lo regula expresamente pero el Estado lo asume al adherirse al Convenio.</div></div>
+  </div>
+
+</div><!-- /page-guia -->
+
+<!-- ═══════════════════ PÁGINA JUEGO ═══════════════════ -->
+<div id="page-juego" class="page">
+  <div class="mode-strip">
+    <button class="mbtn on" onclick="setMode('drag',this)">⟳ Arrastrar</button>
+    <button class="mbtn" onclick="setMode('click',this)">⚡ Clic</button>
+    <span style="margin-left:auto;font-family:var(--mono);font-size:9.5px;color:var(--txt3)">6 rondas · 48 artículos</span>
+  </div>
+  <div class="game-hdr">
+    <div class="gsc"><div class="gsc-n c" id="sc-cor">0</div><div class="gsc-l">Correctas</div></div>
+    <div class="gsc"><div class="gsc-n e" id="sc-err">0</div><div class="gsc-l">Errores</div></div>
+    <div class="gprog">
+      <div class="gprog-info"><span id="g-prog-txt">0 / 0</span><span id="g-round-lbl">Ronda 1 de 6</span></div>
+      <div class="gprog-bar"><div class="gprog-fill" id="g-prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="rdots" id="rdots"></div>
+    <button class="btn" onclick="resetGame()">↺ Reiniciar</button>
+  </div>
+  <div class="instr" id="ginstr">Arrastra cada artículo hasta su definición correcta</div>
+  <div id="game-area"></div>
+  <div class="win" id="win-screen">
+    <div class="win-trophy">🏆</div>
+    <div class="win-title"><b>Budapest</b>Lex</div>
+    <div class="win-sub">¡Completaste las 6 rondas · 48 artículos dominados!</div>
+    <div class="win-stats">
+      <div class="win-stat"><div class="ws-n" id="ws-c">0</div><div class="ws-l">Correctas</div></div>
+      <div class="win-stat"><div class="ws-n" id="ws-e" style="color:var(--rose)">0</div><div class="ws-l">Errores</div></div>
+      <div class="win-stat"><div class="ws-n" id="ws-t">0s</div><div class="ws-l">Tiempo</div></div>
+    </div>
+    <button class="btn primary" onclick="resetGame()">Jugar de nuevo</button>
+  </div>
+</div>
+
+<!-- ═══════════════════ PÁGINA QUIZ ═══════════════════ -->
+<div id="page-quiz" class="page">
+  <div class="quiz-top">
+    <div class="qst">📋 <span class="qst-n p" id="qtot">90</span> preguntas</div>
+    <div class="qst">✅ <span class="qst-n c" id="qcor">0</span> correctas</div>
+    <div class="qst">❌ <span class="qst-n e" id="qerr">0</span> errores</div>
+    <div class="qst">⏳ <span class="qst-n p" id="qpen">90</span> pendientes</div>
+    <button class="btn" style="margin-left:auto" onclick="resetQuiz()">↺ Reiniciar</button>
+  </div>
+  <div class="quiz-filters" id="qfilters">
+    <button class="flt on" onclick="qFilter('all',this)">Todas</button>
+    <button class="flt" onclick="qFilter('vf',this)">V / F</button>
+    <button class="flt" onclick="qFilter('mc',this)">Múltiple</button>
+    <button class="flt" onclick="qFilter('def',this)">Definiciones</button>
+    <button class="flt" onclick="qFilter('del',this)">Delitos</button>
+    <button class="flt" onclick="qFilter('proc',this)">Procedimiento</button>
+    <button class="flt" onclick="qFilter('coop',this)">Cooperación</button>
+    <button class="flt" onclick="qFilter('chile',this)">Chile</button>
+    <button class="flt" onclick="qFilter('av',this)">Avanzadas</button>
+    <button class="flt" onclick="qFilter('gen',this)">General</button>
+    <button class="flt" onclick="qFilter('ap',this)">Aplicación</button>
+  </div>
+  <div id="quiz-area"></div>
+</div>
+
+</div><!-- /wrap -->
+<script>
+// ═══════════════════════════════════════════
+// DATA — FLASHCARDS
+// ═══════════════════════════════════════════
+const CARDS=[
+  {art:'Art. 1(a)',tag:'Cap. I · Definiciones',term:'Sistema informático',def:'Todo dispositivo aislado o conjunto de dispositivos interconectados cuya función sea el tratamiento automatizado de datos en ejecución de un programa. Abarca PCs, servidores, smartphones, IoT, sistemas SCADA, wearables. La definición es amplia para mantenerse vigente ante el avance tecnológico.'},
+  {art:'Art. 1(b)',tag:'Cap. I · Definiciones',term:'Datos informáticos',def:'Toda representación de hechos, información o conceptos expresados en cualquier forma que se preste a tratamiento informático, INCLUYENDO los programas. Clave: un malware, ransomware o exploit es legalmente un dato informático, lo que permite aplicar el Art. 4 cuando se instala código malicioso.'},
+  {art:'Art. 1(c)',tag:'Cap. I · Definiciones',term:'Datos sobre el tráfico',def:'Datos que indiquen el origen, destino, itinerario, hora, fecha, tamaño, duración o tipo del servicio de una comunicación. Son los METADATOS, no el contenido. Saber que A llamó a B a las 3am es tráfico; leer lo que dijeron es contenido. Tienen regímenes procesales distintos.'},
+  {art:'Art. 1(d)',tag:'Cap. I · Definiciones',term:'Prestador de servicios',def:'(i) Entidad que ofrezca comunicación por sistemas informáticos; (ii) entidad que procese o almacene datos en nombre del servicio o sus usuarios. Abarca ISPs, redes sociales, cloud, email, mensajería, VPNs. Están obligados a cooperar con las autoridades por los Arts. 17, 18, 20 y 21.'},
+  {art:'Art. 2',tag:'Cap. II-A · Delitos CID',term:'Acceso ilícito',def:'Acceso deliberado e ilegítimo a todo o parte de un sistema informático. Tipo base mínimo: solo el acceso no autorizado, sin más requisitos. Los Estados PUEDEN añadir: vulneración de seguridad, intención delictiva especial, o que el sistema esté conectado a otro. La palabra "principalmente" en herramientas (Art. 6) protege la ciberseguridad legítima.'},
+  {art:'Art. 3',tag:'Cap. II-A · Delitos CID',term:'Interceptación ilícita',def:'Interceptación por medios técnicos de transmisiones NO PÚBLICAS de datos, incluyendo emisiones electromagnéticas (ataques TEMPEST/Van Eck). Cubre sniffers de red, ataques MITM, y la captura de datos a través de las emanaciones del monitor o teclado sin tocar el sistema.'},
+  {art:'Art. 4',tag:'Cap. II-A · Delitos CID',term:'Interferencia en los datos',def:'Dañar, borrar, deteriorar, alterar o suprimir datos informáticos. Los Estados pueden exigir daño grave como requisito adicional. Cubren ransomware (cifra = altera datos), malware destructor, borrado de bases de datos. Chile ejerció la opción y exige "daño grave al titular" en el Art. 4 Ley 21.459.'},
+  {art:'Art. 5',tag:'Cap. II-A · Delitos CID',term:'Interferencia en el sistema',def:'Obstaculización grave del funcionamiento mediante introducción, TRANSMISIÓN, daño, borrado, deterioro, alteración o supresión de datos. La palabra "transmisión" cubre expresamente los ataques DDoS, que saturan el sistema con tráfico sin insertar ni destruir datos. Fuente del Art. 1 Ley 21.459.'},
+  {art:'Art. 6',tag:'Cap. II-A · Delitos CID',term:'Abuso de dispositivos',def:'Producir, vender o distribuir herramientas concebidas PRINCIPALMENTE para cometer delitos de los Arts. 2–5. La salvaguarda "principalmente" protege a los investigadores de ciberseguridad que usan herramientas de pen-testing (nmap, metasploit, Burp Suite) cuya función principal es legítima.'},
+  {art:'Art. 7',tag:'Cap. II-A · Delitos informáticos',term:'Falsificación informática',def:'Introducir, alterar, borrar o suprimir datos para generar datos no auténticos, con intención de que sean tomados como auténticos o usados para efectos jurídicos. NO requiere perjuicio consumado. Ejemplos: alterar contrato digital, falsificar firma electrónica, adulterar declaración tributaria.'},
+  {art:'Art. 8',tag:'Cap. II-A · Delitos informáticos',term:'Fraude informático',def:'Causar perjuicio patrimonial mediante manipulación de datos o interferencia en sistemas, con intención de obtener beneficio económico. La diferencia clave con la estafa: NO HAY PERSONA ENGAÑADA, se manipula directamente el sistema. Chile añadió penas escalonadas por monto UTM.'},
+  {art:'Art. 9',tag:'Cap. II-A · Delitos de contenido',term:'Pornografía infantil',def:'Único delito de contenido del Convenio principal. Tipifica producción, distribución, transmisión y posesión de pornografía infantil por sistemas informáticos, incluyendo personas que parecen menores e imágenes realistas. Los Estados pueden reservarse la exclusión de imágenes no reales.'},
+  {art:'Art. 10',tag:'Cap. II-A · Propiedad intelectual',term:'Infracciones de propiedad intelectual',def:'Infracciones de derechos de PI cometidas DELIBERADAMENTE y a escala COMERCIAL. El doble requisito excluye el uso personal no lucrativo. Un usuario que baja música para uso propio no comete este delito; quien distribuye comercialmente sí. Reserva posible si hay recursos civiles/administrativos efectivos.'},
+  {art:'Art. 11',tag:'Cap. II-A · Responsabilidad',term:'Tentativa y complicidad',def:'Exige tipificar la complicidad dolosa y la tentativa dolosa de los delitos de los Arts. 2–10. Reservas permitidas: los Estados pueden no aplicar tentativa a Arts. 3 (interceptación) y 4 (interferencia datos) porque la tentativa puede confundirse con monitoreo legítimo.'},
+  {art:'Art. 12',tag:'Cap. II-A · Responsabilidad',term:'Responsabilidad de personas jurídicas',def:'Las personas jurídicas pueden ser responsables (penal, civil o administrativa) cuando sus directivos con poder de decisión cometan delitos del Convenio en su nombre y beneficio. No excluye la responsabilidad de la persona física. Chile usa la vía penal (Ley 20.393, modificada por Ley 21.459).'},
+  {art:'Art. 13',tag:'Cap. II-A · Responsabilidad',term:'Sanciones efectivas, proporcionadas y disuasorias',def:'Las sanciones deben ser efectivas, proporcionadas y disuasorias, incluyendo privación de libertad. Para personas jurídicas también sanciones pecuniarias. El Convenio NO fija penas mínimas en años. Solo en Art. 24 (extradición) se establece el umbral de 1 año.'},
+  {art:'Art. 14',tag:'Cap. II-B · Procedimiento',term:'Ámbito de aplicación procesal',def:'Las medidas de los Arts. 16–21 aplican a delitos del Convenio, otros delitos por sistemas informáticos, y crucialmente a la obtención de PRUEBAS ELECTRÓNICAS DE CUALQUIER DELITO PENAL. Un homicidio o tráfico de drogas con evidencia digital puede investigarse con las herramientas del Convenio.'},
+  {art:'Art. 15',tag:'Cap. II-B · Procedimiento',term:'Condiciones y salvaguardias',def:'Toda medida procesal requiere condiciones y salvaguardias del derecho interno, incluyendo supervisión judicial u otras formas independientes de control, motivación de la medida, y limitación de alcance y duración. Equilibrio entre eficacia investigativa y derechos fundamentales.'},
+  {art:'Art. 16',tag:'Cap. II-B · Procedimiento',term:'Conservación inmediata de datos',def:'Conservar datos almacenados hasta 90 días, renovable, sin orden judicial previa. Obligación de confidencialidad: el destinatario NO puede avisar al investigado. Solo conserva, no entrega. La entrega requiere Arts. 18–19. Fuente directa del Art. 218 bis CPP chileno.'},
+  {art:'Art. 17',tag:'Cap. II-B · Procedimiento',term:'Conservación de datos de tráfico',def:'Cuando aplica el Art. 16, el prestador divulga de inmediato los datos de tráfico suficientes para identificar a los prestadores intermediarios y la vía de la comunicación. Permite rastrear toda la cadena: ISP → CDN → VPN → servidor final.'},
+  {art:'Art. 18',tag:'Cap. II-B · Procedimiento',term:'Orden de presentación',def:'Ordena a personas o prestadores entregar datos informáticos específicos o datos de SUSCRIPTORES: nombre, dirección, IP, email, teléfono, datos de facturación. Son datos de registro (quién eres), no de comunicación (qué dijiste), por eso tienen régimen más flexible que el Art. 21.'},
+  {art:'Art. 19',tag:'Cap. II-B · Procedimiento',term:'Registro y confiscación',def:'Permite registrar sistemas informáticos y confiscar datos. Si los datos están en otro sistema conectado DENTRO DEL MISMO TERRITORIO, puede ampliarse el registro. No aplica transfronterizamente: para datos en otro país se usa el Art. 31.'},
+  {art:'Art. 20',tag:'Cap. II-B · Procedimiento',term:'Tráfico en tiempo real',def:'Recopilación en tiempo real de datos de TRÁFICO (metadatos) de comunicaciones específicas. Menos intrusivo que el Art. 21 porque son metadatos, no contenido. Por eso no requiere que el delito sea "grave". Los prestadores deben cooperar técnicamente.'},
+  {art:'Art. 21',tag:'Cap. II-B · Procedimiento',term:'Interceptación de contenido en tiempo real',def:'Interceptación en tiempo real del CONTENIDO de comunicaciones, limitada a "determinados delitos GRAVES". La medida más intrusiva del Convenio. Los prestadores deben cooperar. En Chile: Art. 12 Ley 21.459 remite a Arts. 222–225 y 226 CPP.'},
+  {art:'Art. 22',tag:'Cap. II-B · Jurisdicción',term:'Jurisdicción — 4 criterios',def:'(a) Territorial: delito en su territorio; (b) buques del pabellón; (c) aeronaves matriculadas; (d) personalidad activa: su nacional cometió el delito en el extranjero. Cuando varios Estados reclaman jurisdicción, celebran consultas. No hay tribunal arbitral ni regla automática de prioridad.'},
+  {art:'Arts. 23–28',tag:'Cap. III · Cooperación',term:'Principios de cooperación + extradición + asistencia mutua',def:'Art. 23: cooperar en la mayor medida posible. Art. 24: extradición (puede usar el Convenio como base legal, pena mínima 1 año, doble incriminación, principio de especialidad). Art. 25: asistencia mutua por INTERPOL o canales directos. Art. 26: información espontánea (facultad). Art. 27: procedimientos. Art. 28: uso limitado de la información.'},
+  {art:'Arts. 29–32',tag:'Cap. III · Cooperación',term:'Cooperación sobre datos (conservación y acceso)',def:'Art. 29: conservación transfronteriza urgente (mínimo 60 días). Art. 30: divulgar datos de tráfico para identificar prestadores intermediarios. Art. 31: solicitar registro y acceso a datos en otro Estado. Art. 32: acceso libre solo si datos son públicos o hay consentimiento del autorizado (base del CLOUD Act de EE.UU.).'},
+  {art:'Arts. 33–35',tag:'Cap. III · Cooperación',term:'Intercepción transfronteriza + Red 24/7',def:'Art. 33: asistencia para tráfico en tiempo real transfronterizo. Art. 34: asistencia para contenido en tiempo real transfronterizo (la más intrusiva). Art. 35: RED 24/7 — punto de contacto permanente 24h/7 días para asistencia inmediata, puede ejecutar medidas directamente.'},
+];
+
+// ═══════════════════════════════════════════
+// DATA — GAME ROUNDS (48 articles in 6 rounds)
+// ═══════════════════════════════════════════
+const ROUNDS=[
+  {id:0,cls:'',title:'Ronda 1 · Cap. I & II-A — Definiciones + Delitos CID (Arts. 1–5)',pairs:[
+    {art:'Art. 1(a) — Sistema informático',def:'Todo dispositivo aislado o conjunto de dispositivos interconectados cuya función sea el tratamiento automatizado de datos en ejecución de un programa.'},
+    {art:'Art. 1(b) — Datos informáticos',def:'Toda representación de hechos, información o conceptos expresados en cualquier forma que se preste a tratamiento informático, INCLUYENDO los programas.'},
+    {art:'Art. 1(c) — Datos sobre el tráfico',def:'Datos que indiquen el origen, destino, itinerario, hora, fecha, tamaño, duración o tipo del servicio de una comunicación (metadatos, ≠ contenido).'},
+    {art:'Art. 1(d) — Prestador de servicios',def:'Entidad que ofrezca comunicación por sistemas informáticos, o que procese/almacene datos en nombre de dicho servicio o sus usuarios.'},
+    {art:'Art. 2 — Acceso ilícito',def:'Acceso deliberado e ilegítimo a todo o parte de un sistema informático. Tipo base mínimo sin requisitos adicionales obligatorios.'},
+    {art:'Art. 3 — Interceptación ilícita',def:'Interceptación por medios técnicos de transmisiones NO PÚBLICAS, incluyendo emisiones electromagnéticas (ataques TEMPEST/Van Eck phreaking).'},
+    {art:'Art. 4 — Interferencia en datos',def:'Dañar, borrar, deteriorar, alterar o suprimir datos informáticos. Los Estados pueden exigir daño grave (Chile lo hace en el Art. 4 Ley 21.459).'},
+    {art:'Art. 5 — Interferencia en sistema',def:'Obstaculización grave del sistema mediante introducción, TRANSMISIÓN, daño, borrado o supresión de datos. La "transmisión" cubre los ataques DDoS.'},
+  ]},
+  {id:1,cls:'b',title:'Ronda 2 · Cap. II-A — Delitos informáticos + Responsabilidad (Arts. 6–13)',pairs:[
+    {art:'Art. 6 — Abuso de dispositivos',def:'Producir, vender o distribuir herramientas concebidas PRINCIPALMENTE para cometer delitos de los Arts. 2–5. Delito de preparación. La salvaguarda "principalmente" protege herramientas legítimas de ciberseguridad.'},
+    {art:'Art. 7 — Falsificación informática',def:'Crear datos no auténticos con intención de que sean usados para efectos jurídicos. No requiere perjuicio consumado. Ejemplos: alterar contrato digital, falsificar firma electrónica.'},
+    {art:'Art. 8 — Fraude informático',def:'Perjuicio patrimonial mediante manipulación de datos o interferencia en sistemas, con intención de obtener beneficio económico. NO hay persona engañada: se manipula el sistema directamente.'},
+    {art:'Art. 9 — Pornografía infantil',def:'Único delito de contenido del Convenio principal. Producción, distribución y posesión de pornografía infantil por sistemas informáticos, incluyendo representaciones de personas que parecen menores.'},
+    {art:'Art. 10 — Propiedad intelectual',def:'Infracciones de PI cometidas deliberadamente y a escala COMERCIAL. El doble requisito excluye el uso personal no lucrativo.'},
+    {art:'Art. 11 — Tentativa y complicidad',def:'Tipificar complicidad dolosa y tentativa dolosa de los delitos Arts. 2–10. Reservas posibles para no aplicar tentativa a los Arts. 3 y 4.'},
+    {art:'Art. 12 — Personas jurídicas',def:'Las personas jurídicas pueden ser responsables (penal, civil o administrativa) cuando sus directivos cometan delitos del Convenio en su nombre y beneficio.'},
+    {art:'Art. 13 — Sanciones',def:'Las sanciones deben ser efectivas, proporcionadas y disuasorias, incluyendo privación de libertad. Para personas jurídicas también sanciones pecuniarias.'},
+  ]},
+  {id:2,cls:'e',title:'Ronda 3 · Cap. II-B — Derecho procesal penal (Arts. 14–22)',pairs:[
+    {art:'Art. 14 — Ámbito procesal',def:'Las medidas procesales aplican también para obtener PRUEBAS ELECTRÓNICAS DE CUALQUIER DELITO PENAL, no solo ciberdelitos. Esto es lo que hace al Convenio un instrumento universal de investigación digital.'},
+    {art:'Art. 15 — Salvaguardias',def:'Toda medida procesal requiere supervisión judicial u otras formas independientes de control, motivación de la medida, y limitación de alcance y duración.'},
+    {art:'Art. 16 — Conservación inmediata',def:'Conservar datos almacenados hasta 90 días, renovable, sin orden judicial previa, con obligación de confidencialidad. Fuente directa del Art. 218 bis CPP chileno.'},
+    {art:'Art. 17 — Datos de tráfico conservados',def:'Al aplicar el Art. 16, el prestador divulga inmediatamente datos de tráfico suficientes para identificar a todos los prestadores intermediarios de la comunicación.'},
+    {art:'Art. 18 — Orden de presentación',def:'Ordenar a prestadores que entreguen datos de suscriptores: nombre, dirección, IP, email, teléfono, datos de facturación. Menos sensibles que el contenido; régimen más flexible.'},
+    {art:'Art. 19 — Registro y confiscación',def:'Registrar sistemas y confiscar datos. Puede ampliarse a otro sistema conectado dentro del MISMO TERRITORIO. Para otro país: Art. 31.'},
+    {art:'Art. 20 — Tráfico en tiempo real',def:'Recopilación en tiempo real de datos de TRÁFICO (metadatos). No requiere delito grave porque son solo metadatos, no contenido. Los prestadores cooperan técnicamente.'},
+    {art:'Art. 21 — Contenido en tiempo real',def:'Interceptación en tiempo real del CONTENIDO de comunicaciones. Solo para "delitos GRAVES" del derecho interno. La medida más intrusiva del Convenio.'},
+    {art:'Art. 22 — Jurisdicción',def:'4 criterios: territorial, buques del pabellón, aeronaves matriculadas, personalidad activa. Conflictos: consultas entre Estados, sin regla automática de prioridad.'},
+  ]},
+  {id:3,cls:'a',title:'Ronda 4 · Cap. III — Cooperación internacional Parte 1 (Arts. 23–29)',pairs:[
+    {art:'Art. 23 — Principio general',def:'Las Partes cooperarán en la mayor medida posible en investigaciones de ciberdelitos y para obtener pruebas electrónicas de cualquier delito penal.'},
+    {art:'Art. 24 — Extradición',def:'Los delitos del Convenio dan lugar a extradición. El Convenio puede ser base legal si no hay tratado bilateral. Requisitos: doble incriminación + pena mínima de 1 año en ambos Estados.'},
+    {art:'Art. 25 — Asistencia mutua general',def:'Asistencia mutua lo más amplia posible. Solicitudes pueden tramitarse urgentemente y canalizarse por INTERPOL u otros organismos internacionales.'},
+    {art:'Art. 26 — Información espontánea',def:'Un Estado PUEDE (facultad, no obligación) transmitir espontáneamente información si considera que puede ayudar a investigaciones en otro Estado.'},
+    {art:'Art. 27 — Procedimientos de asistencia',def:'Solicitudes a la autoridad central designada. El Estado requerido puede aplazar si interfiere con investigación propia, o denegar si afecta soberanía o seguridad.'},
+    {art:'Art. 28 — Confidencialidad y uso limitado',def:'La información obtenida solo puede usarse para los fines especificados en la solicitud. Genera confianza entre Estados y fomenta la cooperación.'},
+    {art:'Art. 29 — Conservación transfronteriza',def:'Pedir a otro Estado que conserve datos en su territorio durante mínimo 60 días mientras se prepara la solicitud formal de asistencia mutua.'},
+  ]},
+  {id:4,cls:'v',title:'Ronda 5 · Cap. III — Cooperación internacional Parte 2 (Arts. 30–35)',pairs:[
+    {art:'Art. 30 — Divulgación de tráfico transfronterizo',def:'Cuando aplica Art. 29 y hay prestadores intermediarios en otro Estado, divulgar inmediatamente los datos de tráfico para identificarlos.'},
+    {art:'Art. 31 — Acceso a datos en otro Estado',def:'Solicitar a otro Estado que registre, acceda, obtenga o divulgue datos almacenados en su territorio. El Estado requerido puede exigir doble incriminación.'},
+    {art:'Art. 32 — Acceso transfronterizo sin autorización',def:'Acceso libre solo si: (a) datos públicamente disponibles, o (b) consentimiento de la persona autorizada a divulgarlos. No existe acceso libre en otros casos.'},
+    {art:'Art. 33 — Tráfico en tiempo real transfronterizo',def:'Asistencia mutua para recopilación en tiempo real de datos de TRÁFICO (metadatos) de comunicaciones transfronterizas.'},
+    {art:'Art. 34 — Contenido en tiempo real transfronterizo',def:'Asistencia mutua para interceptación en tiempo real del CONTENIDO de comunicaciones transfronterizas. Solo donde lo permita el derecho interno.'},
+    {art:'Art. 35 — Red 24/7',def:'Cada Estado designa un punto de contacto disponible 24 horas/7 días para asistencia inmediata: asesoramiento técnico, conservación urgente, localización de sospechosos.'},
+  ]},
+  {id:5,cls:'r',title:'Ronda 6 · Cap. IV — Cláusulas finales (Arts. 36–48)',pairs:[
+    {art:'Arts. 36–37 — Firma y adhesión',def:'Firmado el 23 nov. 2001; en vigor el 1 jul. 2004. El Comité de Ministros puede invitar a cualquier Estado no miembro del Consejo de Europa a adherirse, previa consulta.'},
+    {art:'Art. 38 — Consecuencias del Convenio',def:'El Convenio complementa los tratados bilaterales de asistencia mutua sin limitarlos. Si hay tratado bilateral más favorable, sigue aplicándose.'},
+    {art:'Art. 40 — Declaraciones',def:'Los Estados pueden ejercer las opciones expresamente autorizadas en el texto (exigir vulneración de seguridad para Art. 2, daño grave para Art. 4, reservas sobre Art. 9).'},
+    {art:'Art. 41 — Cláusula federal',def:'Para Estados federales: el Gobierno central puede asumir las obligaciones incluso cuando su implementación sea competencia de los estados federados.'},
+    {art:'Art. 42 — Reservas limitadas',def:'"Solo podrán formularse las reservas expresamente autorizadas en el presente Convenio." No son admisibles reservas generales. Protege la coherencia del sistema.'},
+    {art:'Art. 44 — Protocolo Adicional STE 189',def:'El Protocolo Adicional (28 ene. 2003) añade actos racistas y xenófobos por sistemas informáticos. Es opcional: un Estado puede ratificar el Convenio sin adherirse al Protocolo.'},
+    {art:'Art. 47 — Denuncia',def:'Un Estado puede retirarse del Convenio con 3 meses de preaviso al Secretario General del Consejo de Europa.'},
+    {art:'Art. 48 — Notificaciones',def:'El Secretario General notifica a todos sobre firmas, ratificaciones, adhesiones, reservas, declaraciones, enmiendas y denuncias.'},
+  ]},
+];
+
+// ═══════════════════════════════════════════
+// DATA — QUIZ (90 questions)
+// ═══════════════════════════════════════════
+const Q=[
+  {t:'vf',cat:'def',q:'El Art. 1 del Convenio define exactamente 4 términos: sistema informático, datos informáticos, datos de tráfico y prestador de servicios.',o:['Verdadero','Falso'],c:0,f:'Correcto. El Art. 1 define exactamente esos 4 conceptos. Toda la maquinaria del Convenio descansa sobre estas 4 definiciones.'},
+  {t:'mc',cat:'def',q:'Según el Art. 1(b), ¿cuál de estos elementos está EXPRESAMENTE incluido en la definición de "datos informáticos"?',o:['Las claves de cifrado RSA','Los programas informáticos','Los metadatos de tráfico','Los datos de suscriptores'],c:1,f:'Los programas están expresamente incluidos. Eso hace que un malware sea legalmente un "dato informático" y permite aplicar el Art. 4 al instalarlo.'},
+  {t:'mc',cat:'def',q:'¿Cuál de estos NO es un dato de tráfico según el Art. 1(c)?',o:['La dirección IP de destino','La hora de la comunicación','El texto del mensaje enviado','El tamaño del archivo transmitido'],c:2,f:'El texto del mensaje es contenido, no tráfico. Datos de tráfico son metadatos: quién, cuándo, desde dónde, hacia dónde, cuánto duró.'},
+  {t:'vf',cat:'def',q:'Los datos de tráfico del Art. 1(c) incluyen el contenido de los mensajes, porque forman parte de la transmisión.',o:['Verdadero','Falso'],c:1,f:'Falso. Datos de tráfico = solo metadatos. El contenido tiene su propio régimen en el Art. 21, mucho más exigente.'},
+  {t:'mc',cat:'def',q:'Una empresa de hosting que almacena sitios web de terceros pero NO ofrece servicios de comunicación, ¿califica como prestador de servicios?',o:['No, porque no ofrece comunicación entre usuarios','Sí, porque almacena datos informáticos en nombre de sus clientes','Solo si tiene más de 1.000 clientes','Solo si está registrada en un Estado Parte'],c:1,f:'Sí califica. El Art. 1(d) tiene dos partes: (i) quien ofrece comunicación, Y (ii) quien almacena/procesa datos en nombre del servicio o sus usuarios. El hosting cae en la segunda.'},
+  {t:'vf',cat:'def',q:'Una cámara de seguridad inteligente que ejecuta firmware y almacena grabaciones califica como sistema informático bajo el Art. 1(a).',o:['Verdadero','Falso'],c:0,f:'Correcto. Ejecuta programas para tratar datos automáticamente. La definición es deliberadamente amplia para cubrir IoT, sistemas embebidos y wearables.'},
+  {t:'mc',cat:'def',q:'Un ataque TEMPEST captura datos aprovechando:',o:['Vulnerabilidades en el protocolo TCP/IP','Las emisiones electromagnéticas de los equipos','La interceptación de paquetes Wi-Fi','El acceso físico al disco duro'],c:1,f:'TEMPEST captura las emisiones electromagnéticas de monitores, teclados y otros dispositivos. El Art. 3 lo cubre expresamente con la frase "emisiones electromagnéticas".'},
+  {t:'mc',cat:'del',q:'El Art. 2 del Convenio en su tipo BASE mínimo exige:',o:['Vulneración de medidas de seguridad','Intención de obtener datos confidenciales','Solo el acceso deliberado e ilegítimo, sin requisitos adicionales','Que el sistema esté conectado a internet'],c:2,f:'El tipo base mínimo del Art. 2 solo exige acceso deliberado e ilegítimo. Los demás elementos son opcionales que cada Estado PUEDE añadir pero no está obligado.'},
+  {t:'vf',cat:'del',q:'Según el Art. 3, interceptar una emisión de radio FM pública constituye interceptación ilícita.',o:['Verdadero','Falso'],c:1,f:'Falso. El Art. 3 solo protege transmisiones NO PÚBLICAS. Una emisión de radio FM es pública y cualquiera puede recibirla legalmente.'},
+  {t:'mc',cat:'del',q:'¿Qué palabra del Art. 5 permite tipificar los ataques DDoS que no destruyen datos sino que saturan el sistema?',o:['"Introducción"','"Transmisión"','"Supresión"','"Deterioro"'],c:1,f:'"Transmisión". Un DDoS no introduce ni destruye datos, solo transmite tráfico masivo que satura el sistema. Sin esa palabra, los DDoS habrían quedado fuera del tipo.'},
+  {t:'mc',cat:'del',q:'Un investigador de seguridad accede sin permiso a una web para documentar una vulnerabilidad. Respecto al Art. 2:',o:['No hay delito porque su intención es legítima','El Convenio crea una excepción expresa para investigadores','El tipo base se configura con el solo acceso no autorizado, independiente de la intención','Solo hay delito si extrae datos personales'],c:2,f:'El tipo base del Art. 2 no exige intención delictiva: el acceso no autorizado es suficiente. La solución para investigadores debe venir de la política criminal interna, no de una excepción en el Convenio.'},
+  {t:'vf',cat:'del',q:'El Art. 4 (interferencia en datos) y el Art. 5 (interferencia en sistema) son mutuamente excluyentes.',o:['Verdadero','Falso'],c:1,f:'Falso. El ransomware configura ambos: cifra los datos (Art. 4) Y obstaculiza el sistema (Art. 5). Los tipos son independientes y pueden concurrir sobre el mismo hecho.'},
+  {t:'mc',cat:'del',q:'La palabra "principalmente" en el Art. 6 sobre herramientas existe para:',o:['Exigir que el daño afecte a la mayoría de los archivos','Proteger herramientas legítimas de ciberseguridad de ser criminalizadas','Agravar la pena cuando es el delito principal del autor','Aplicar el tipo solo a distribuidores mayoristas'],c:1,f:'Sin "principalmente", herramientas como Metasploit o Nmap serían ilegales. La salvaguarda protege a quienes las diseñan y usan con fines legítimos de seguridad.'},
+  {t:'mc',cat:'del',q:'El Art. 7 (falsificación informática) se diferencia del Art. 8 (fraude informático) en que:',o:['El Art. 7 requiere perjuicio patrimonial efectivo; el Art. 8 no','El Art. 7 no requiere perjuicio consumado; el Art. 8 sí exige perjuicio patrimonial','Ambos requieren perjuicio económico','El Art. 7 solo aplica a documentos públicos'],c:1,f:'El Art. 7 se consuma con la creación de datos falsos con intención de uso; no necesita perjuicio. El Art. 8 exige que se cause efectivamente un perjuicio patrimonial.'},
+  {t:'vf',cat:'del',q:'El fraude informático del Art. 8 puede aplicarse cuando se manipula el sistema bancario directamente, sin engañar a ninguna persona.',o:['Verdadero','Falso'],c:0,f:'Correcto. Esa es la diferencia con la estafa: en el fraude informático se manipula el sistema, no a una persona. No hay error en ninguna víctima humana.'},
+  {t:'mc',cat:'del',q:'¿Cuál es el ÚNICO delito de contenido tipificado en el cuerpo principal del Convenio STE 185?',o:['El terrorismo informático','La pornografía infantil (Art. 9)','El discurso de odio en línea','Las noticias falsas distribuidas digitalmente'],c:1,f:'La pornografía infantil (Art. 9) es el único delito de contenido del Convenio principal. El discurso de odio se añadió en el Protocolo Adicional STE 189 de 2003, que es opcional.'},
+  {t:'mc',cat:'del',q:'El Art. 10 exige que las infracciones de PI sean cometidas "deliberadamente y a escala comercial". ¿Qué excluye el requisito "comercialmente"?',o:['Solo excluye a menores de edad','Excluye el intercambio personal sin fines de lucro','Solo excluye a empresas sin fines de lucro','Excluye cualquier uso que no genere dinero directamente'],c:1,f:'El doble requisito excluye el uso personal no lucrativo. Quien baja música para escucharla personalmente no comete este delito; quien distribuye comercialmente sí.'},
+  {t:'vf',cat:'del',q:'El Art. 11 obliga a tipificar la tentativa de todos los delitos del Convenio sin ninguna excepción.',o:['Verdadero','Falso'],c:1,f:'Falso. El Art. 11 permite reservarse el derecho de no aplicar la tentativa a los Arts. 3 (interceptación) y 4 (interferencia en datos).'},
+  {t:'mc',cat:'del',q:'Bajo el Art. 12, cuando una empresa es responsable por un ciberdelito cometido por su gerente, la responsabilidad penal del gerente:',o:['Desaparece porque ya responde la empresa','Se transfiere íntegramente a la empresa','Se mantiene: ambas responsabilidades coexisten','Depende del monto del daño causado'],c:2,f:'El Art. 12 es explícito: la responsabilidad de la empresa no excluye la de la persona física. Coexisten.'},
+  {t:'mc',cat:'del',q:'El Art. 13 exige sanciones efectivas, proporcionadas y disuasorias. ¿Qué penas mínimas concretas fija el Convenio?',o:['Mínimo 1 año para todos los delitos','Mínimo 2 años para delitos graves','No fija penas mínimas concretas; solo establece tres estándares cualitativos','Mínimo 6 meses para delitos simples y 3 años para graves'],c:2,f:'El Convenio NO fija penas mínimas en años. Solo exige efectividad, proporcionalidad y disuasión. La única cifra concreta es el umbral de 1 año para la extradición en el Art. 24.'},
+  {t:'mc',cat:'proc',q:'Según el Art. 14, ¿para qué tipos de delitos aplican las medidas procesales de los Arts. 16-21?',o:['Solo para los delitos tipificados en el Convenio','Para los delitos del Convenio y cualquier otro delito con evidencia electrónica','Solo para delitos contra infraestructura crítica','Para todos los delitos excepto los políticos'],c:1,f:'El Art. 14 extiende las herramientas a cualquier delito penal con evidencia electrónica. Es lo que hace al Convenio un instrumento universal de investigación digital.'},
+  {t:'vf',cat:'proc',q:'El Art. 15 exige que la supervisión de medidas procesales sea siempre judicial.',o:['Verdadero','Falso'],c:1,f:'Falso. El Art. 15 dice "supervisión judicial U OTRAS FORMAS DE SUPERVISIÓN INDEPENDIENTE". Los Estados pueden crear otros mecanismos, siempre que sean genuinamente independientes.'},
+  {t:'mc',cat:'proc',q:'El Art. 16 permite ordenar la conservación de datos almacenados por un plazo de:',o:['30 días improrrogables','60 días renovable una vez','Hasta 90 días, renovable','180 días sin renovación'],c:2,f:'Hasta 90 días, renovable. Chile adoptó exactamente este plazo en el Art. 218 bis CPP.'},
+  {t:'vf',cat:'proc',q:'La orden de conservación del Art. 16 obliga al prestador a entregar los datos de inmediato a las autoridades.',o:['Verdadero','Falso'],c:1,f:'Falso. El Art. 16 solo ordena CONSERVAR (no borrar, no modificar). La entrega es una medida distinta que se tramita por el Art. 18 o 19.'},
+  {t:'mc',cat:'proc',q:'Un prestador recibe una orden de conservación bajo el Art. 16 y notifica a su cliente por "transparencia". Esto constituye:',o:['Un acto correcto que refuerza la confianza','Una violación de la obligación de confidencialidad del Art. 16','Un derecho de la empresa por protección de datos','Una acción neutral sin consecuencias legales'],c:1,f:'El Art. 16 impone una obligación de confidencialidad. Si el investigado se entera, puede destruir o mover datos antes de la orden de entrega formal.'},
+  {t:'mc',cat:'proc',q:'El Art. 17 exige que al conservar datos bajo el Art. 16, el prestador también divulgue inmediatamente:',o:['El contenido de las comunicaciones conservadas','Los datos de suscriptores del investigado','Los datos de tráfico para identificar a los prestadores intermediarios en la cadena','Los logs de acceso de todos los usuarios del sistema'],c:2,f:'El Art. 17 exige los metadatos para rastrear la cadena: ISP → CDN → VPN → servidor final. Sin esto, la investigación se detiene en el primer eslabón.'},
+  {t:'mc',cat:'proc',q:'¿Cuál es la diferencia entre "datos de suscriptores" del Art. 18 y "contenido" del Art. 21?',o:['No hay diferencia práctica','Datos de suscriptores identifican al usuario (nombre, IP, email); el contenido es lo que comunicó','Los datos de suscriptores requieren delito grave; el contenido no','El Art. 18 aplica solo a ISPs; el Art. 21 a redes sociales'],c:1,f:'Datos de suscriptores = datos de registro (quién eres). Contenido = lo que dijiste o escribiste. El contenido tiene régimen mucho más exigente por ser más intrusivo.'},
+  {t:'vf',cat:'proc',q:'El Art. 19 permite que las autoridades amplíen un registro informático a servidores ubicados en otro país.',o:['Verdadero','Falso'],c:1,f:'Falso. El Art. 19 solo permite ampliar el registro dentro del MISMO TERRITORIO. Para datos en otro país se requiere solicitud de asistencia mutua bajo el Art. 31.'},
+  {t:'mc',cat:'proc',q:'La diferencia clave entre el Art. 20 (tráfico en tiempo real) y el Art. 21 (contenido en tiempo real) es:',o:['El Art. 20 es para delitos graves; el Art. 21 para cualquier delito','El Art. 20 captura metadatos sin exigir delito grave; el Art. 21 captura contenido y se limita a delitos graves','El Art. 20 aplica a comunicaciones nacionales; el Art. 21 a internacionales','Son sinónimos, solo difieren en el nombre'],c:1,f:'Art. 20 = metadatos, sin requisito de delito grave. Art. 21 = contenido completo, solo para delitos graves. El contenido es mucho más intrusivo.'},
+  {t:'mc',cat:'proc',q:'El Art. 22 establece jurisdicción por "personalidad activa". Esto significa que:',o:['El Estado con mayor poder económico tiene prioridad','El Estado puede juzgar a sus nacionales por delitos cometidos en el extranjero','El Estado donde está la víctima tiene prioridad','Solo el Estado donde ocurrió el daño tiene jurisdicción'],c:1,f:'Personalidad activa = el Estado puede juzgar a sus propios nacionales por delitos cometidos fuera de su territorio, si el delito es punible donde se cometió o fuera de todo Estado.'},
+  {t:'vf',cat:'proc',q:'Cuando varios Estados tienen jurisdicción concurrente sobre el mismo ciberdelito, el Estado con la víctima más numerosa tiene prioridad automática.',o:['Verdadero','Falso'],c:1,f:'Falso. El Art. 22 no establece ninguna regla automática de prioridad. Los Estados simplemente "celebran consultas". No hay tribunal arbitral ni criterio de desempate obligatorio.'},
+  {t:'mc',cat:'coop',q:'Para que un delito dé lugar a extradición bajo el Art. 24, la pena mínima debe ser:',o:['6 meses en el Estado requirente','1 año en ambos Estados','2 años en el Estado donde se cometió','3 años si afecta infraestructura crítica'],c:1,f:'1 año en AMBOS Estados. Es el único lugar del Convenio donde aparece un número concreto de años. El requisito de doble incriminación también aplica.'},
+  {t:'vf',cat:'coop',q:'Si no existe tratado bilateral de extradición, el Convenio puede servir como base legal para extraditar.',o:['Verdadero','Falso'],c:0,f:'Correcto. El Art. 24 establece expresamente que en ausencia de tratado bilateral, el Estado puede considerar el Convenio mismo como base jurídica para la extradición.'},
+  {t:'mc',cat:'coop',q:'El Art. 26 sobre información espontánea establece que transmitirla es:',o:['Obligatorio siempre que se detecte una amenaza transfronteriza','Facultativo: el Estado PUEDE transmitirla si considera que puede ayudar','Obligatorio solo para delitos contra infraestructura crítica','Prohibido sin solicitud previa del otro Estado'],c:1,f:'El Art. 26 usa "puede", no "deberá". Es una facultad discrecional. El Estado que transmite también puede imponer condiciones de uso.'},
+  {t:'mc',cat:'coop',q:'El principio de "uso limitado" del Art. 28 significa que:',o:['La información solo puede almacenarse por 90 días','La información solo puede usarse para los fines especificados en la solicitud, salvo consentimiento posterior','El Estado requerido puede limitar el volumen de información que entrega','Solo puede usarse en el proceso penal que originó la solicitud, sin excepción'],c:1,f:'Para usar la información en otros fines se necesita consentimiento del Estado que la proporcionó. Genera confianza y hace que los Estados compartan más libremente.'},
+  {t:'vf',cat:'coop',q:'El plazo mínimo de conservación transfronteriza del Art. 29 es de 90 días, igual que el Art. 16.',o:['Verdadero','Falso'],c:1,f:'Falso. El Art. 29 establece un mínimo de 60 días (no 90). El Art. 16 (conservación interna) establece hasta 90. Son plazos distintos para contextos distintos.'},
+  {t:'mc',cat:'coop',q:'El Art. 32 permite acceso transfronterizo sin autorización del otro Estado en exactamente dos casos. ¿Cuáles son?',o:['Datos gubernamentales y datos bancarios','Datos de menores y datos de terroristas','Datos públicamente disponibles y datos con consentimiento del autorizado a divulgarlos','Datos de nacionales del Estado requirente y datos en servidores aliados'],c:2,f:'Solo dos casos: (a) datos públicamente disponibles, y (b) consentimiento de quien tiene derecho a divulgarlos. Fuera de estos supuestos, siempre se requiere solicitud formal.'},
+  {t:'mc',cat:'coop',q:'¿Qué hace que la Red 24/7 del Art. 35 sea la herramienta más útil en la práctica?',o:['Que permite arrestar sospechosos en otro país sin trámite','Que permite asistencia inmediata sin esperar tramitación formal, crucial cuando los datos pueden borrarse en horas','Que unifica las bases de datos policiales de todos los países','Que elimina el requisito de doble incriminación en casos urgentes'],c:1,f:'En un ciberataque en curso no hay tiempo para solicitudes formales que tardan semanas. La Red 24/7 permite respuesta inmediata: conservar datos urgentes, asesoría técnica, localizar sospechosos.'},
+  {t:'vf',cat:'coop',q:'El Art. 30 obliga a divulgar el contenido de las comunicaciones cuando se aplica la conservación transfronteriza del Art. 29.',o:['Verdadero','Falso'],c:1,f:'Falso. El Art. 30 solo exige divulgar datos de TRÁFICO (metadatos) para identificar a los prestadores intermediarios. El contenido tiene régimen mucho más estricto (Arts. 33-34).'},
+  {t:'mc',cat:'coop',q:'El Art. 31 (acceso a datos en otro Estado) se diferencia del Art. 19 (registro y confiscación) en que:',o:['No hay diferencia','Art. 31 requiere solicitud formal a otro Estado; Art. 19 es acceso unilateral en el propio territorio','Art. 31 es para datos de tráfico; Art. 19 para contenido','Art. 31 no requiere orden judicial; Art. 19 siempre la requiere'],c:1,f:'Art. 19 = las autoridades registran sistemas en su propio territorio. Art. 31 = pedir a OTRO Estado que registre y entregue datos, mediante solicitud formal de asistencia mutua.'},
+  {t:'mc',cat:'gen',q:'¿En qué ciudad y año fue firmado el Convenio?',o:['Estrasburgo, 2000','Bruselas, 2001','Budapest, 2001','Ginebra, 2002'],c:2,f:'Budapest, el 23 de noviembre de 2001. Entró en vigor el 1 de julio de 2004.'},
+  {t:'mc',cat:'gen',q:'¿Cuántos artículos tiene el Convenio de Budapest?',o:['36','42','48','54'],c:2,f:'48 artículos en 4 capítulos: Cap. I (1 art.), Cap. II (21 arts.), Cap. III (13 arts.), Cap. IV (13 arts.).'},
+  {t:'vf',cat:'gen',q:'El Convenio fue elaborado y firmado exclusivamente por Estados miembros del Consejo de Europa.',o:['Verdadero','Falso'],c:1,f:'Falso. Participaron y firmaron también Canadá, EE.UU., Japón y Sudáfrica, que no son miembros del Consejo de Europa.'},
+  {t:'mc',cat:'gen',q:'El número de Serie de Tratados Europeos del Convenio es:',o:['STE N° 108','STE N° 150','STE N° 185','STE N° 189'],c:2,f:'STE N° 185. El STE N° 189 es el Protocolo Adicional sobre xenofobia (2003). El STE N° 108 es el Convenio de protección de datos de 1981.'},
+  {t:'vf',cat:'gen',q:'El Art. 42 prohíbe las reservas generales: solo pueden formularse las expresamente autorizadas en el texto.',o:['Verdadero','Falso'],c:0,f:'Correcto. Sin el Art. 42, los Estados podrían vaciar sus obligaciones con reservas genéricas. Es una protección clave de la coherencia del sistema.'},
+  {t:'mc',cat:'gen',q:'Según el Art. 47, un Estado puede retirarse del Convenio con un preaviso de:',o:['1 mes','3 meses','6 meses','1 año'],c:1,f:'3 meses de preaviso al Secretario General del Consejo de Europa.'},
+  {t:'mc',cat:'gen',q:'El Protocolo Adicional STE N° 189 (2003) añade al Convenio:',o:['Reglas sobre privacidad de datos','La penalización de actos racistas y xenófobos por sistemas informáticos','Tribunales internacionales para ciberdelitos','Reglas sobre criptomonedas'],c:1,f:'El Protocolo Adicional añade exclusivamente los delitos de contenido racista y xenófobo cometidos por sistemas informáticos.'},
+  {t:'vf',cat:'gen',q:'El Protocolo Adicional STE N° 189 es de adhesión obligatoria para todo Estado que ratifique el Convenio principal.',o:['Verdadero','Falso'],c:1,f:'Falso. El Protocolo es completamente opcional e independiente. Un Estado puede ratificar el STE 185 sin adherirse al STE 189.'},
+  {t:'mc',cat:'gen',q:'El Art. 38 establece que el Convenio, respecto a otros tratados de asistencia mutua:',o:['Los deroga y reemplaza completamente','Los complementa sin limitarlos','Los suspende mientras esté vigente','Solo aplica en ausencia de cualquier otro tratado'],c:1,f:'El Convenio COMPLEMENTA los tratados bilaterales existentes sin limitarlos. Si hay un tratado bilateral más favorable, sigue aplicándose.'},
+  {t:'mc',cat:'gen',q:'¿Cuántos capítulos tiene el Convenio de Budapest?',o:['3','4','5','6'],c:1,f:'4 capítulos: I (Terminología), II (Derecho penal sustantivo y procesal), III (Cooperación internacional), IV (Cláusulas finales).'},
+  {t:'mc',cat:'chile',q:'¿Cuál era la principal deficiencia de la Ley 19.223 respecto a los ataques DDoS?',o:['Tenía penas demasiado bajas','Ninguno de sus 4 artículos incluía la "transmisión" de datos como conducta típica','Solo protegía sistemas del Estado, no privados','Exigía que el daño fuera superior a 100 UTM'],c:1,f:'La Ley 19.223 no incluía "transmisión" en ninguno de sus 4 artículos. Los DDoS saturan con tráfico (transmisión) sin insertar ni destruir datos, por lo que no encuadraban.'},
+  {t:'vf',cat:'chile',q:'Chile ejerció la facultad del Art. 4 del Convenio de exigir "daño grave" en su Art. 4 de la Ley 21.459.',o:['Verdadero','Falso'],c:0,f:'Correcto. El Art. 4 del Convenio lo permite opcionalmente. Chile lo exige, elevando el umbral de punibilidad respecto a la Ley 19.223.'},
+  {t:'mc',cat:'chile',q:'El Art. 218 bis del CPP chileno implementa directamente:',o:['El Art. 14 del Convenio','El Art. 16 del Convenio','El Art. 29 del Convenio','El Art. 35 del Convenio'],c:1,f:'El Art. 16 del Convenio es la fuente directa: mismo plazo (90 días, renovable), misma confidencialidad obligatoria. Incorporado por el Art. 18 de la Ley 21.459.'},
+  {t:'mc',cat:'chile',q:'La Ley 21.459 mejoró la tipificación del acceso ilícito respecto a la Ley 19.223 al:',o:['Aumentar la pena mínima a 3 años','Eliminar el ánimo especial del tipo base y trasladarlo como agravante','Exigir que el sistema tenga medidas de seguridad','Limitar el delito a sistemas conectados a internet'],c:1,f:'La Ley 19.223 exigía "ánimo de apoderarse" casi imposible de probar. La Ley 21.459 adoptó el estándar del Convenio: tipo base sin ánimo + el ánimo como agravante.'},
+  {t:'vf',cat:'chile',q:'La Ley 21.459 tipificó el fraude informático por primera vez en Chile, pues la Ley 19.223 no lo contemplaba.',o:['Verdadero','Falso'],c:0,f:'Correcto. La Ley 19.223 solo tenía 4 artículos sobre daño a sistemas e interceptación. No tipificaba el fraude ni la falsificación informática.'},
+  {t:'mc',cat:'chile',q:'Chile cumple la obligación del Art. 35 (Red 24/7) principalmente a través de:',o:['Un artículo expreso de la Ley 21.459','El CSIRT y la PDI, aunque la Ley 21.459 no lo regule expresamente','El Ministerio de Relaciones Exteriores exclusivamente','La Fiscalía Nacional Cibernética creada por la Ley 21.459'],c:1,f:'La Ley 21.459 no crea expresamente el punto de contacto 24/7. Chile lo implementa a través del CSIRT y la PDI. Es una obligación asumida al adherirse al Convenio.'},
+  {t:'mc',cat:'chile',q:'El Art. 8 de la Ley 21.459 (abuso de dispositivos) usa la misma salvaguarda del Art. 6 del Convenio. ¿Cuál es?',o:['Que el daño supere 40 UTM','Que las herramientas estén concebidas "principalmente" para delinquir','Que el autor sea reincidente','Que el ataque sea contra infraestructura crítica'],c:1,f:'"Principalmente" protege herramientas legítimas de ciberseguridad. Solo quedan tipificadas las diseñadas principalmente para atacar, no las de uso dual mayoritariamente legítimo.'},
+  {t:'vf',cat:'chile',q:'La Ley 21.459 introdujo los agentes encubiertos digitales en canales cerrados, medida sin equivalente en el Convenio.',o:['Verdadero','Falso'],c:0,f:'Correcto. El Convenio no contempla agentes encubiertos digitales. Chile los incorporó en el Art. 12 de la Ley 21.459 para infiltración en chats privados y dark web.'},
+  {t:'mc',cat:'chile',q:'La Ley 21.459 implementó la responsabilidad de personas jurídicas (Art. 12 del Convenio) mediante:',o:['Un título especial dentro de la propia Ley 21.459','La modificación de la Ley 20.393 para incluir ciberdelitos como delitos base','La aplicación directa del Código Penal','La creación de un registro de empresas infractoras'],c:1,f:'Chile ya tenía el sistema de responsabilidad penal de empresas en la Ley 20.393. La Ley 21.459 la amplió incluyendo ciberdelitos como nuevos delitos base.'},
+  {t:'mc',cat:'ap',q:'Un fiscal investiga un homicidio y necesita metadatos de llamadas del sospechoso. ¿Qué artículo del Convenio habilita este procedimiento?',o:['Art. 2, porque implica acceso a sistema informático','Art. 14, que extiende medidas procesales a pruebas electrónicas de cualquier delito','Art. 23, sobre cooperación internacional','Art. 9, sobre delitos de contenido'],c:1,f:'El Art. 14 es clave: las medidas procesales aplican para obtener pruebas electrónicas de CUALQUIER delito, no solo ciberdelitos. Un homicidio con evidencia digital puede usar todas estas herramientas.'},
+  {t:'mc',cat:'ap',q:'Un ciberataque desde Rusia daña servidores en Chile, Francia y Japón. ¿Cuántos Estados tienen jurisdicción simultánea?',o:['Solo Rusia (personalidad activa)','Solo Chile, Francia y Japón (territorial)','Los cuatro: Rusia por personalidad activa + los tres por territorialidad','Solo el Estado más afectado económicamente'],c:2,f:'Los cuatro tienen jurisdicción: Rusia (personalidad activa) + Chile, Francia y Japón (territorial). El Art. 22 resuelve el conflicto mediante consultas.'},
+  {t:'vf',cat:'ap',q:'La fiscalía chilena puede registrar directamente servidores en Alemania usando el Art. 19 del Convenio.',o:['Verdadero','Falso'],c:1,f:'Falso. El Art. 19 solo autoriza registrar sistemas dentro del PROPIO territorio. Para datos en Alemania, Chile debe usar el Art. 31 o el Art. 29.'},
+  {t:'mc',cat:'ap',q:'¿Cuál de estos hechos NO encuadra en el Art. 8 (fraude informático)?',o:['Manipular el sistema bancario para desviar fondos','Alterar el sistema de inventario para robar mercancía sin que se registre','Enviar un email engañoso que lleva a la víctima a transferir dinero voluntariamente','Introducir código en nómina para aumentar el propio salario'],c:2,f:'El phishing puro (email engañoso → error en la víctima → disposición voluntaria) es ESTAFA, no fraude informático. El Art. 8 exige manipulación del sistema, no engaño a una persona.'},
+  {t:'mc',cat:'av',q:'¿Por qué el Art. 14 es la disposición más revolucionaria del Convenio para el derecho procesal moderno?',o:['Porque crea vigilancia preventiva digital','Porque transforma el Convenio de instrumento específico en instrumento universal de investigación digital','Porque establece penas más severas que los Códigos nacionales','Porque unifica procedimientos de todos los Estados Parte'],c:1,f:'El Art. 14 extiende las herramientas digitales de investigación a CUALQUIER delito penal con evidencia electrónica. Un fiscal puede usar el Convenio para investigar tráfico de drogas si hay evidencia digital.'},
+  {t:'mc',cat:'av',q:'El principio de "especialidad" en la extradición del Art. 24 protege al extraditado porque:',o:['Garantiza que sea juzgado por especialistas en ciberdelitos','Impide que sea procesado por delitos distintos a los que motivaron la extradición','Le otorga derecho a elegir el Estado donde será juzgado','Limita la pena máxima al mínimo del Estado requerido'],c:1,f:'Sin especialidad, un Estado podría extraditar por un ciberdelito y luego procesar por delitos políticos. Este principio garantiza que solo se juzgue por los delitos específicos de la solicitud.'},
+  {t:'mc',cat:'av',q:'¿Cuál es el vacío más importante que NO cubre el Convenio principal (STE 185)?',o:['Los ataques DDoS','La responsabilidad de personas jurídicas','Los delitos de discurso de odio y xenofobia en internet','La cooperación para extradición'],c:2,f:'El discurso de odio no está en el Convenio principal; fue añadido en el Protocolo Adicional STE 189 (2003), de adhesión opcional. El Convenio también omite terrorismo digital y desinformación.'},
+  {t:'vf',cat:'av',q:'El Convenio obliga a los Estados a crear bases de datos compartidas en tiempo real sobre cibercriminales.',o:['Verdadero','Falso'],c:1,f:'Falso. El Convenio no crea bases de datos compartidas automáticas. La cooperación es reactiva (a solicitud). Solo la Red 24/7 permite solicitudes urgentes, pero siempre a petición específica.'},
+  {t:'mc',cat:'av',q:'El Art. 32(b) es controversial porque:',o:['Permite la pena de muerte para ciberdelincuentes','Una empresa privada podría "consentir" acceso a datos de sus usuarios sin notificar al Estado territorial (base del CLOUD Act de EE.UU.)','Prohíbe el uso de VPNs en investigaciones','Crea un tribunal arbitral sin controles democráticos'],c:1,f:'El debate: ¿puede Google o Microsoft "consentir" que autoridades extranjeras accedan a datos de sus usuarios sin notificar al Estado donde están los servidores? EE.UU. lo interpreta ampliamente (CLOUD Act 2018); la UE considera que viola la soberanía territorial.'},
+  {t:'mc',cat:'av',q:'La consecuencia de que el Art. 42 prohíba reservas generales es que:',o:['Los Estados no pueden adaptar el Convenio a su sistema jurídico','Los Estados no pueden ratificar el tratado sin cumplir todas las obligaciones substantivas core','Los plazos de conservación son obligatorios sin excepción','La extradición no puede limitarse por ningún Estado'],c:1,f:'Sin el Art. 42, un Estado podría ratificar con una reserva general excluyendo toda la cooperación internacional. La prohibición garantiza que las obligaciones fundamentales sean efectivas.'},
+];
+
+// ═══════════════════════════════════════════
+// NAV
+// ═══════════════════════════════════════════
+function showPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nbtn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('page-'+id).classList.add('on');
+  btn.classList.add('on');
+}
+function showStudy(id,btn){
+  document.querySelectorAll('.ssec').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.stab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('ss'+id).classList.add('on');
+  btn.classList.add('on');
+  if(id==='cards') fcRender();
+}
+function goArt(id,btn){
+  const el=document.getElementById(id);
+  if(!el)return;
+  const top=el.getBoundingClientRect().top+window.scrollY-130;
+  window.scrollTo({top,behavior:'smooth'});
+  el.style.transition='background .3s';
+  el.parentElement.style.background='rgba(15,207,207,.18)';
+  el.parentElement.style.transition='background .3s';
+  setTimeout(()=>{el.parentElement.style.background=''},1400);
+  document.querySelectorAll('.sbl').forEach(l=>l.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+// ═══════════════════════════════════════════
+// RAIL DRAG-SCROLL
+// ═══════════════════════════════════════════
+(()=>{
+  const r=document.getElementById('rail');
+  let down=false,sx=0,sl=0;
+  r.addEventListener('mousedown',e=>{down=true;r.classList.add('grabbing');sx=e.pageX-r.offsetLeft;sl=r.scrollLeft});
+  r.addEventListener('mouseleave',()=>{down=false;r.classList.remove('grabbing')});
+  r.addEventListener('mouseup',()=>{down=false;r.classList.remove('grabbing')});
+  r.addEventListener('mousemove',e=>{if(!down)return;e.preventDefault();r.scrollLeft=sl-(e.pageX-r.offsetLeft-sx)*1.5});
+})();
+
+// ═══════════════════════════════════════════
+// FLASHCARDS
+// ═══════════════════════════════════════════
+const FC_CATS={c1:[0,1,2,3],c2a:[4,5,6,7,8,9,10,11,12,13,14,15],c2b:[16,17,18,19,20,21,22,23,24],c3:[25,26,27]};
+let fcIdx=0,fcList=CARDS.map((_,i)=>i),fcFlipped=false;
+
+function fcFilter(cat,btn){
+  document.querySelectorAll('#fcfiltros .flt').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  fcList=cat==='all'?CARDS.map((_,i)=>i):(FC_CATS[cat]||CARDS.map((_,i)=>i));
+  fcIdx=0;fcRender();
+}
+function fcRender(){
+  const c=CARDS[fcList[fcIdx]];
+  document.getElementById('fc-badge').textContent=c.art;
+  document.getElementById('fc-term').textContent=c.term;
+  document.getElementById('fc-preview').textContent=c.def.length>120?c.def.substring(0,120)+'…':c.def;
+  document.getElementById('fc-tag-f').textContent=c.tag;
+  document.getElementById('fc-back-lbl').textContent=c.tag;
+  document.getElementById('fc-def').textContent=c.def;
+  document.getElementById('fcc').textContent=(fcIdx+1)+' / '+fcList.length;
+  document.getElementById('fcp').style.width=((fcIdx+1)/fcList.length*100).toFixed(1)+'%';
+  // reset flip
+  const inner=document.getElementById('fc-inner');
+  fcFlipped=false;
+  inner.style.transition='none';
+  inner.classList.remove('flipped');
+  setTimeout(()=>{inner.style.transition=''},30);
+}
+function fcFlip(){
+  const inner=document.getElementById('fc-inner');
+  fcFlipped=!fcFlipped;
+  inner.classList.toggle('flipped',fcFlipped);
+}
+function fcGo(d,e){
+  if(e)e.stopPropagation();
+  fcIdx=(fcIdx+d+fcList.length)%fcList.length;
+  fcRender();
+}
+document.addEventListener('keydown',e=>{
+  const s=document.getElementById('sscards');
+  if(!s||!s.classList.contains('on'))return;
+  if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();fcGo(1);}
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();fcGo(-1);}
+  if(e.key===' '||e.key==='Enter'){e.preventDefault();fcFlip();}
+});
+(()=>{
+  let tx=0,moved=false;
+  document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;moved=false},{passive:true});
+  document.addEventListener('touchmove',e=>{if(Math.abs(e.touches[0].clientX-tx)>8)moved=true},{passive:true});
+  document.addEventListener('touchend',e=>{
+    const s=document.getElementById('sscards');
+    if(!s||!s.classList.contains('on')||!moved)return;
+    const dx=e.changedTouches[0].clientX-tx;
+    if(Math.abs(dx)>45)fcGo(dx<0?1:-1);
+  },{passive:true});
+})();
+
+// ═══════════════════════════════════════════
+// GAME ENGINE
+// ═══════════════════════════════════════════
+let gMode='drag',gRound=0,gCor=0,gErr=0,gMatched=0,gTotal=0;
+let tCor=0,tErr=0,gStart=null,dragSrc=null,clickSel=null;
+
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+
+function setMode(m,btn){
+  gMode=m;
+  document.querySelectorAll('.mbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('ginstr').textContent=m==='drag'?'Arrastra cada artículo hasta su definición correcta':'Clic en un artículo, luego clic en su definición';
+  resetGame();
+}
+function resetGame(){
+  gCor=0;gErr=0;tCor=0;tErr=0;gStart=Date.now();
+  document.getElementById('sc-cor').textContent='0';
+  document.getElementById('sc-err').textContent='0';
+  document.getElementById('win-screen').classList.remove('show');
+  gRound=0;buildDots();buildRound();
+}
+function buildDots(){
+  const el=document.getElementById('rdots');
+  el.innerHTML=ROUNDS.map((_,i)=>`<div class="rdot${i<gRound?' done':i===gRound?' active':''}"></div>`).join('');
+}
+function buildRound(){
+  const r=ROUNDS[gRound];
+  const pairs=shuffle([...r.pairs]);
+  gTotal=pairs.length;gMatched=0;
+  updateProg();
+  document.getElementById('g-round-lbl').textContent=`Ronda ${gRound+1} de ${ROUNDS.length}`;
+  if(gMode==='drag')buildDrag(pairs,r);
+  else buildClick(pairs,r);
+}
+function buildDrag(pairs,r){
+  const defs=shuffle([...pairs]);
+  let h=`<div class="rnd-head ${r.cls}">${r.title}<span style="font-size:9px;opacity:.7">${pairs.length} pares</span></div>`;
+  h+=`<div class="drag-layout"><div><div class="col-head">Artículos — arrastra</div><div class="drag-items" id="dsrc">`;
+  pairs.forEach(p=>{h+=`<div class="dc ${r.cls}" draggable="true" data-art="${encodeURIComponent(p.art)}"><div class="dc-art">${p.art}</div><div class="dc-txt">Arrastra a la definición →</div><div class="chk">✓</div></div>`;});
+  h+=`</div></div><div><div class="col-head">Definiciones — suelta aquí</div><div class="drag-items" id="ddst">`;
+  defs.forEach(p=>{h+=`<div class="dz" data-art="${encodeURIComponent(p.art)}"><div class="dz-lbl">Budapest</div><div class="dz-ph">${p.def}</div></div>`;});
+  h+=`</div></div></div>`;
+  document.getElementById('game-area').innerHTML=h;
+  document.querySelectorAll('.dc').forEach(card=>{
+    card.addEventListener('dragstart',e=>{dragSrc=card;card.classList.add('dragging');e.dataTransfer.setData('text/plain',card.dataset.art);});
+    card.addEventListener('dragend',()=>{card.classList.remove('dragging');dragSrc=null;});
+  });
+  document.querySelectorAll('.dz').forEach(zone=>{
+    zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('over');});
+    zone.addEventListener('dragleave',()=>zone.classList.remove('over'));
+    zone.addEventListener('drop',e=>{
+      e.preventDefault();zone.classList.remove('over');
+      if(!dragSrc)return;
+      if(dragSrc.dataset.art===zone.dataset.art){
+        gCor++;tCor++;gMatched++;
+        dragSrc.classList.add('matched');dragSrc.draggable=false;
+        zone.classList.add('filled');
+        const dt=zone.querySelector('.dz-ph')?.textContent||'';
+        zone.innerHTML=`<div class="dz-lbl" style="color:var(--emerald)">✓</div><div class="dz-content">${dt}</div>`;
+        spawnParticles(e.clientX,e.clientY,'#10b981');
+        animScore('sc-cor');updateScores();
+        if(gMatched===gTotal)setTimeout(nextRound,600);
+      } else {
+        gErr++;tErr++;
+        zone.classList.add('wrong');
+        setTimeout(()=>zone.classList.remove('wrong'),400);
+        animScore('sc-err');updateScores();
+      }
+    });
+  });
+}
+function buildClick(pairs,r){
+  const sd=shuffle([...pairs]);
+  let h=`<div class="rnd-head ${r.cls}">${r.title}<span style="font-size:9px;opacity:.7">${pairs.length} pares</span></div><div class="click-list">`;
+  pairs.forEach((p,i)=>{
+    const m=sd[i];
+    h+=`<div class="click-pair" id="cp${i}"><div class="ci art" data-art="${encodeURIComponent(p.art)}" data-pair="${i}" onclick="ciArt(this)"><div class="ci-lbl">Artículo</div><div class="ci-txt">${p.art}</div></div><div class="ci def" data-art="${encodeURIComponent(m.art)}" data-pair="${i}" onclick="ciDef(this)"><div class="ci-lbl">Definición</div><div class="ci-txt">${m.def}</div></div></div>`;
+  });
+  h+=`</div>`;
+  document.getElementById('game-area').innerHTML=h;
+}
+function ciArt(el){
+  if(el.classList.contains('matched-i'))return;
+  document.querySelectorAll('.ci.art.sel').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');clickSel=el;
+}
+function ciDef(el){
+  if(el.classList.contains('matched-i'))return;
+  if(!clickSel){el.classList.add('sel');clickSel=el;return;}
+  if(clickSel.classList.contains('def')){
+    document.querySelectorAll('.ci.def.sel').forEach(e=>e.classList.remove('sel'));
+    el.classList.add('sel');clickSel=el;return;
+  }
+  const ae=clickSel,de=el;
+  ae.classList.remove('sel');
+  if(ae.dataset.art===de.dataset.art){
+    gCor++;tCor++;gMatched++;
+    ae.classList.add('matched-i');de.classList.add('matched-i');
+    document.getElementById('cp'+ae.dataset.pair)?.classList.add('matched-p');
+    const rb=de.getBoundingClientRect();
+    spawnParticles(rb.left+rb.width/2,rb.top+rb.height/2,'#10b981');
+    animScore('sc-cor');clickSel=null;updateScores();
+    if(gMatched===gTotal)setTimeout(nextRound,600);
+  } else {
+    gErr++;tErr++;
+    const pp=document.getElementById('cp'+ae.dataset.pair);
+    if(pp){pp.classList.add('wrong-p');setTimeout(()=>pp.classList.remove('wrong-p'),400);}
+    animScore('sc-err');clickSel=null;updateScores();
+  }
+}
+function nextRound(){
+  gRound++;buildDots();
+  if(gRound<ROUNDS.length){gCor=0;gErr=0;buildRound();}
+  else{
+    const t=Math.round((Date.now()-gStart)/1000);
+    document.getElementById('ws-c').textContent=tCor;
+    document.getElementById('ws-e').textContent=tErr;
+    document.getElementById('ws-t').textContent=t+'s';
+    document.getElementById('win-screen').classList.add('show');
+    document.getElementById('game-area').innerHTML='';
+    confetti();
+  }
+}
+function updateScores(){
+  document.getElementById('sc-cor').textContent=gCor;
+  document.getElementById('sc-err').textContent=gErr;
+  updateProg();
+}
+function updateProg(){
+  document.getElementById('g-prog-txt').textContent=gMatched+' / '+gTotal;
+  document.getElementById('g-prog-fill').style.width=(gTotal?(gMatched/gTotal*100):0)+'%';
+}
+function animScore(id){
+  const el=document.getElementById(id);
+  el.style.transform='scale(1.5)';
+  setTimeout(()=>el.style.transform='',200);
+}
+
+// ═══════════════════════════════════════════
+// QUIZ ENGINE
+// ═══════════════════════════════════════════
+let qState={},qFilter='all',qCor=0,qErr=0;
+function initQuiz(){
+  qState={};qCor=0;qErr=0;
+  Q.forEach((_,i)=>qState[i]={answered:false,correct:false});
+  renderQuiz();
+}
+function resetQuiz(){initQuiz();}
+function qFilter2(f,btn){
+  qFilter=f;
+  document.querySelectorAll('#qfilters .flt').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderQuiz();
+}
+window.qFilter=qFilter2;
+function renderQuiz(){
+  updateQStats();
+  let filtered=Q.map((q,i)=>({...q,idx:i}));
+  if(qFilter!=='all')filtered=filtered.filter(q=>q.t===qFilter||q.cat===qFilter);
+  const catL={def:'Definiciones',del:'Delitos',proc:'Procedimiento',coop:'Cooperación',chile:'Chile',av:'Avanzada',gen:'General',ap:'Aplicación'};
+  document.getElementById('quiz-area').innerHTML=filtered.map((q,fi)=>{
+    const st=qState[q.idx];
+    const tb=q.t==='vf'?'<span class="qb vf">V/F</span>':'<span class="qb mc">Múltiple</span>';
+    const cb=`<span class="qb cat">${catL[q.cat]||q.cat}</span>`;
+    let cc='qcard'+(st.answered&&st.correct?' ck':st.answered?' ce':'');
+    let oh=q.o.map((opt,oi)=>{
+      let cls='qopt'+(st.answered?' dis':'');
+      let dc='';
+      if(st.answered){
+        if(oi===q.c){cls+=' ck';dc='✓';}
+        else if(st.chosen===oi&&oi!==q.c){cls+=' ce';dc='✗';}
+      }
+      const lb=q.t==='vf'?'':String.fromCharCode(65+oi)+'. ';
+      return `<button class="${cls}" onclick="ansQ(${q.idx},${oi})"><div class="odot">${dc}</div><span>${lb}${opt}</span></button>`;
+    }).join('');
+    let fb=st.answered?`<div class="qfb ${st.correct?'ok':'ko'} show">${st.correct?'✅ ':'❌ '}${q.f}</div>`:'';
+    return `<div class="${cc}" id="qc${q.idx}" style="animation-delay:${Math.min(fi*.015,.4)}s"><div class="qmeta"><span class="qn">#${q.idx+1}</span>${tb}${cb}</div><div class="qt">${q.q}</div><div class="qopts">${oh}</div>${fb}</div>`;
+  }).join('')||'<p style="color:var(--txt3);text-align:center;padding:3rem;font-family:var(--mono)">Sin preguntas para este filtro.</p>';
+}
+function ansQ(idx,chosen){
+  const st=qState[idx];if(st.answered)return;
+  st.answered=true;st.chosen=chosen;st.correct=(chosen===Q[idx].c);
+  if(st.correct)qCor++;else qErr++;
+  updateQStats();
+  const card=document.getElementById('qc'+idx);if(!card)return;
+  card.classList.add(st.correct?'ck':'ce');
+  card.querySelectorAll('.qopt').forEach((ob,oi)=>{
+    ob.classList.add('dis');ob.onclick=null;
+    const dot=ob.querySelector('.odot');
+    if(oi===Q[idx].c){ob.classList.add('ck');if(dot)dot.textContent='✓';}
+    else if(oi===st.chosen&&oi!==Q[idx].c){ob.classList.add('ce');if(dot)dot.textContent='✗';}
+  });
+  const ex=card.querySelector('.qfb');if(ex)ex.remove();
+  const fb=document.createElement('div');
+  fb.className='qfb '+(st.correct?'ok':'ko')+' show';
+  fb.textContent=(st.correct?'✅ ':'❌ ')+Q[idx].f;
+  card.appendChild(fb);
+}
+function updateQStats(){
+  const a=Object.values(qState).filter(s=>s.answered).length;
+  document.getElementById('qtot').textContent=Q.length;
+  document.getElementById('qcor').textContent=qCor;
+  document.getElementById('qerr').textContent=qErr;
+  document.getElementById('qpen').textContent=Q.length-a;
+}
+
+// ═══════════════════════════════════════════
+// EFFECTS
+// ═══════════════════════════════════════════
+function spawnParticles(x,y,color){
+  for(let i=0;i<12;i++){
+    const p=document.createElement('div');
+    p.className='particle';
+    const angle=Math.PI*2*i/12,d=35+Math.random()*45;
+    p.style.cssText=`left:${x}px;top:${y}px;background:${color};width:${4+Math.random()*4}px;height:${4+Math.random()*4}px;--tx:${Math.cos(angle)*d}px;--ty:${Math.sin(angle)*d}px;animation-delay:${Math.random()*.05}s;`;
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),700);
+  }
+}
+function confetti(){
+  const cols=['#0fcfcf','#3b82f6','#f59e0b','#10b981','#8b5cf6','#f43f5e','#fff'];for(let i=0;i<100;i++)setTimeout(()=>{
+    const c=document.createElement('div');
+    c.className='confetti-p';
+    const s=5+Math.random()*8;
+    c.style.cssText=`left:${Math.random()*100}vw;top:-15px;background:${cols[Math.floor(Math.random()*cols.length)]};transform:rotate(${Math.random()*360}deg);animation-duration:${2.5+Math.random()*2}s;animation-delay:${Math.random()*.6}s;width:${s}px;height:${s}px;border-radius:${Math.random()>.5?'50%':'2px'};`;
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),5000);
+  },i*18);
+}
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+resetGame();
+initQuiz();
+fcRender();
+</script>
+</body>
+</html>
